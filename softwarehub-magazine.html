@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<!--
+================================================================================
+  SOFTWAREHUB v3 — Magazine Dashboard Layout
+--------------------------------------------------------------------------------
+  Side-by-side content sections instead of vertical scroll:
+   - Top row: Hero slider (left, 2/3 width) + Top Trending (right, 1/3 width)
+   - Second row: Categories (3-column grid)
+   - Main grid + sticky sidebar (Top Rated / Featured / Ad)
+   - Dark/Light theme toggle, persisted
+   - Ad-resilient slots (reserved heights prevent CLS)
+   - Direct PostgREST API calls (no SDK)
+================================================================================
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SOFTWAREHUB — A curated software repository directory with direct download mirrors." />
+    <title>SOFTWAREHUB — Software Repository Directory</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'Roboto', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'] },
+                    colors: {
+                        brand: { DEFAULT: '#2563eb', dark: '#1d4ed8', light: '#3b82f6' },
+                        accent: { DEFAULT: '#34A853', dark: '#2d9244' },
+                    },
+                    boxShadow: {
+                        card: '0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06)',
+                        nav:  '0 1px 0 rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)',
+                        hero: '0 10px 40px rgba(37, 99, 235, 0.25)',
+                        glow: '0 0 0 1px rgba(37,99,235,0.15), 0 8px 24px rgba(37,99,235,0.18)',
+                    },
+                    borderRadius: { xl2: '1rem', '3xl': '1.5rem', '4xl': '2rem' },
+                },
+            },
+        };
+    </script>
+
+    <link rel="preconnect" href="https://ttokitwfthjrqzfabfwx.supabase.co" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ====================================================================
+           THEME VARIABLES
+           ==================================================================== */
+        :root {
+            --bg:           #f9fafb;
+            --bg-elevated:  #ffffff;
+            --bg-subtle:    #f3f4f6;
+            --bg-glass:     rgba(255, 255, 255, 0.75);
+            --border:       #e5e7eb;
+            --border-soft:  #f1f5f9;
+            --text:         #0f172a;
+            --text-muted:   #64748b;
+            --text-soft:    #475569;
+            --brand:        #2563eb;
+            --brand-dark:   #1d4ed8;
+            --hero-from:    #2563eb;
+            --hero-via:     #7c3aed;
+            --hero-to:      #db2777;
+            --gradient-card: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 100%);
+        }
+        html.dark {
+            --bg:           #0a0e1f;
+            --bg-elevated:  #131830;
+            --bg-subtle:    #1a2238;
+            --bg-glass:     rgba(19, 24, 48, 0.75);
+            --border:       #2a3350;
+            --border-soft:  #1f2942;
+            --text:         #f1f5f9;
+            --text-muted:   #94a3b8;
+            --text-soft:    #cbd5e1;
+            --brand:        #3b82f6;
+            --brand-dark:   #60a5fa;
+            --hero-from:    #1e3a8a;
+            --hero-via:     #6d28d9;
+            --hero-to:      #be185d;
+            --gradient-card: linear-gradient(135deg, #1e293b 0%, #1a2238 100%);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            transition: background-color .25s ease, color .25s ease;
+        }
+
+        .surface       { background: var(--bg-elevated); border-color: var(--border); }
+        .surface-subtle{ background: var(--bg-subtle);  border-color: var(--border); }
+        .surface-glass { background: var(--bg-glass); backdrop-filter: blur(12px); border-color: var(--border); }
+        .text-muted    { color: var(--text-muted); }
+        .text-soft     { color: var(--text-soft); }
+        .border-themed { border-color: var(--border); }
+        .border-soft   { border-color: var(--border-soft); }
+
+        /* ====================================================================
+           SPINNER
+           ==================================================================== */
+        @keyframes sh-spin { to { transform: rotate(360deg); } }
+        .sh-spinner-ring {
+            border: 3px solid rgba(37, 99, 235, 0.15);
+            border-top-color: var(--brand);
+            border-radius: 9999px;
+            animation: sh-spin 0.7s linear infinite;
+        }
+
+        /* ====================================================================
+           HERO SLIDER
+           ==================================================================== */
+        .hero-track {
+            display: flex;
+            transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+            height: 100%;
+        }
+        .hero-slide { flex: 0 0 100%; min-width: 100%; height: 100%; }
+        .hero-gradient {
+            background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-via) 50%, var(--hero-to) 100%);
+        }
+        .hero-dot {
+            width: 6px; height: 6px; border-radius: 9999px;
+            background: rgba(255,255,255,0.4);
+            transition: all .3s ease;
+            cursor: pointer;
+        }
+        .hero-dot.active { background: #fff; width: 22px; }
+        .hero-arrow {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all .2s ease;
+        }
+        .hero-arrow:hover { background: rgba(255,255,255,0.3); transform: scale(1.08); }
+        .hero-bg-icon {
+            position: absolute; font-size: 18rem; opacity: 0.08;
+            right: -3rem; top: -4rem; pointer-events: none; user-select: none;
+        }
+
+        /* ====================================================================
+           CARDS
+           ==================================================================== */
+        .sh-card {
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+        }
+        .sh-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+            border-color: var(--brand);
+        }
+        .sh-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .sh-clamp-3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+        .sh-clamp-1 { display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
+
+        /* ====================================================================
+           HORIZONTAL SCROLL
+           ==================================================================== */
+        .h-scroll {
+            display: flex; gap: 0.75rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 0.5rem;
+            scrollbar-width: thin;
+        }
+        .h-scroll > * { flex: 0 0 200px; scroll-snap-align: start; }
+        .h-scroll::-webkit-scrollbar { height: 6px; }
+        .h-scroll::-webkit-scrollbar-track { background: transparent; }
+        .h-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        .h-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* ====================================================================
+           AD SLOTS — reserved heights to prevent CLS
+           ==================================================================== */
+        .ad-slot {
+            background: var(--bg-subtle);
+            border: 1px dashed var(--border);
+            border-radius: 0.75rem;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.7rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            min-height: 90px; width: 100%;
+            position: relative; overflow: hidden;
+        }
+        .ad-slot.ad-leaderboard { min-height: 90px;  max-width: 728px; margin-left:auto; margin-right:auto; }
+        .ad-slot.ad-rectangle  { min-height: 250px; max-width: 300px; }
+        .ad-slot::before {
+            content: 'Advertisement';
+            position: absolute; top: 4px; left: 8px;
+            font-size: 9px; opacity: 0.5;
+        }
+        .ad-slot:has(iframe, ins, img) { background: transparent; border: 0; }
+        .ad-slot:has(iframe, ins, img)::before { display: none; }
+
+        /* ====================================================================
+           THEME TOGGLE
+           ==================================================================== */
+        .theme-toggle {
+            position: relative; width: 52px; height: 26px;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            cursor: pointer; transition: all .25s ease;
+        }
+        .theme-toggle-thumb {
+            position: absolute; top: 1px; left: 1px;
+            width: 22px; height: 22px;
+            background: var(--brand);
+            border-radius: 9999px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; transition: transform .25s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        html.dark .theme-toggle-thumb { transform: translateX(26px); }
+
+        /* ====================================================================
+           MISC
+           ==================================================================== */
+        html { scroll-behavior: smooth; }
+        .section-anchor { scroll-margin-top: 80px; }
+
+        /* Category badge colors */
+        .cat-badge.cat-0 { background: rgba(37,99,235,0.12);  color:#2563eb; }
+        .cat-badge.cat-1 { background: rgba(220,38,38,0.12);  color:#dc2626; }
+        .cat-badge.cat-2 { background: rgba(34,197,94,0.12);  color:#22c55e; }
+        .cat-badge.cat-3 { background: rgba(217,119,6,0.12);  color:#d97706; }
+        .cat-badge.cat-4 { background: rgba(147,51,234,0.12); color:#9333ea; }
+        .cat-badge.cat-5 { background: rgba(14,165,233,0.12); color:#0ea5e9; }
+        .cat-badge.cat-6 { background: rgba(236,72,153,0.12); color:#ec4899; }
+        .cat-badge.cat-7 { background: rgba(20,184,166,0.12); color:#14b8a6; }
+        html.dark .cat-badge.cat-0 { background: rgba(59,130,246,0.20); color:#93c5fd; }
+        html.dark .cat-badge.cat-1 { background: rgba(248,113,113,0.20); color:#fca5a5; }
+        html.dark .cat-badge.cat-2 { background: rgba(74,222,128,0.20);  color:#86efac; }
+        html.dark .cat-badge.cat-3 { background: rgba(251,191,36,0.20) ; color:#fde68a; }
+        html.dark .cat-badge.cat-4 { background: rgba(192,132,252,0.20); color:#d8b4fe; }
+        html.dark .cat-badge.cat-5 { background: rgba(56,189,248,0.20);  color:#7dd3fc; }
+        html.dark .cat-badge.cat-6 { background: rgba(244,114,182,0.20); color:#f9a8d4; }
+        html.dark .cat-badge.cat-7 { background: rgba(45,212,191,0.20);  color:#5eead4; }
+
+        /* Trending mini list (right column of hero row) */
+        .trend-row {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.625rem;
+            border-radius: 0.625rem;
+            transition: background-color .15s ease;
+            text-decoration: none; color: inherit;
+        }
+        .trend-row:hover { background: var(--bg-subtle); }
+        .trend-rank {
+            width: 22px; height: 22px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 800;
+            background: var(--brand); color: #fff;
+            border-radius: 9999px;
+        }
+
+        /* Sidebar widget */
+        .sidebar-widget {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+
+        /* Category tile (3-column grid) */
+        .cat-tile {
+            position: relative; overflow: hidden;
+            background: var(--gradient-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            cursor: pointer;
+            text-decoration: none; color: inherit;
+            display: flex; flex-direction: column; gap: 0.5rem;
+            min-height: 120px;
+        }
+        .cat-tile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border-color: var(--brand);
+        }
+        .cat-tile-icon {
+            position: absolute; right: -1rem; bottom: -1rem;
+            font-size: 5rem; opacity: 0.12; pointer-events: none;
+        }
+
+        #search-results-view.hidden, #main-content.hidden { display: none; }
+
+        /* Sticky sidebar on desktop */
+        @media (min-width: 1024px) {
+            .sticky-sidebar { position: sticky; top: 84px; }
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased min-h-screen">
+
+    <!-- ============================================================
+         STICKY TOP NAVIGATION
+         ============================================================ -->
+    <header class="sticky top-0 z-50 surface-glass border-b">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-3 sm:gap-6 h-16">
+
+                <a href="#" class="flex-shrink-0 flex items-center select-none">
+                    <span class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                        SOFTWARE<span class="text-brand">HUB</span>
+                    </span>
+                </a>
+
+                <div class="flex-1 max-w-2xl mx-auto">
+                    <label for="search-bar" class="sr-only">Search softwares</label>
+                    <div class="relative">
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted"
+                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" />
+                        </svg>
+                        <input
+                            id="search-bar" type="text" autocomplete="off" spellcheck="false"
+                            placeholder="Search softwares instantly..."
+                            class="w-full pl-12 pr-4 py-2.5 text-sm sm:text-base surface-subtle border border-transparent rounded-full focus:bg-[var(--bg-elevated)] focus:border-brand focus:ring-2 focus:ring-brand/30 outline-none transition placeholder:text-muted"
+                            style="color: var(--text);" />
+                    </div>
+                </div>
+
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <span id="result-count" class="hidden sm:inline-block text-xs font-semibold text-muted surface-subtle px-3 py-1.5 rounded-full">
+                        Loading…
+                    </span>
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                        <span class="theme-toggle-thumb">
+                            <svg id="theme-icon-sun" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.71-.71M6.34 6.34l-.71-.71m12.02 0l-.71.71M6.34 17.66l-.71.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <svg id="theme-icon-moon" class="w-3.5 h-3.5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ============================================================
+         MAIN CONTENT
+         ============================================================ -->
+    <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- LOADING STATE -->
+        <div id="loading-spinner" class="flex flex-col items-center justify-center py-24 text-center">
+            <div class="sh-spinner-ring w-12 h-12 mb-4"></div>
+            <p class="text-base sm:text-lg font-medium text-soft">Fetching direct software registry...</p>
+            <p class="text-sm text-muted mt-1">Connecting to live Supabase catalog</p>
+        </div>
+
+        <!-- ERROR BANNER -->
+        <div id="error-banner" class="hidden mb-6">
+            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-xl px-5 py-4 text-sm">
+                <p id="error-message" class="font-medium"></p>
+            </div>
+        </div>
+
+        <!-- REAL CONTENT -->
+        <div id="real-content" class="hidden space-y-6">
+
+            <!-- ============================================
+                 ROW 1: HERO (left, 2/3) + TOP TRENDING (right, 1/3)
+                 ============================================ -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- HERO SLIDER (left, spans 2 cols) -->
+                <div class="lg:col-span-2 section-anchor" id="hero-section">
+                    <div class="relative overflow-hidden rounded-3xl shadow-hero h-[380px] sm:h-[440px]">
+                        <div id="hero-track" class="hero-track"></div>
+                        <button id="hero-prev" class="hero-arrow absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full text-white flex items-center justify-center z-10" aria-label="Previous slide">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                        </button>
+                        <button id="hero-next" class="hero-arrow absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full text-white flex items-center justify-center z-10" aria-label="Next slide">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        </button>
+                        <div id="hero-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10"></div>
+                    </div>
+                </div>
+
+                <!-- TOP TRENDING (right, 1 col) -->
+                <aside class="surface border rounded-3xl p-5 flex flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">🔥</span>
+                            <h2 class="text-lg font-bold">Top Trending</h2>
+                        </div>
+                        <span class="text-xs text-muted">Live</span>
+                    </div>
+                    <div id="top-trending-container" class="flex flex-col gap-1 flex-1 overflow-y-auto"></div>
+                </aside>
+            </section>
+
+            <!-- AD SLOT 1 -->
+            <div class="ad-slot ad-leaderboard" id="ad-slot-1"></div>
+
+            <!-- ============================================
+                 ROW 2: BROWSE BY CATEGORY — 3-col tile grid
+                 ============================================ -->
+            <section class="section-anchor" id="categories-section">
+                <div class="flex items-end justify-between mb-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">📂</span>
+                            <h2 class="text-2xl font-bold">Browse by Category</h2>
+                        </div>
+                        <p class="text-sm text-muted mt-1">Pick a domain to explore</p>
+                    </div>
+                </div>
+                <div id="categories-tiles" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+            </section>
+
+            <!-- AD SLOT 2 -->
+            <div class="ad-slot ad-leaderboard" id="ad-slot-2"></div>
+
+            <!-- ============================================
+                 ROW 3: ALL APPS GRID + STICKY SIDEBAR
+                 ============================================ -->
+            <section class="grid grid-cols-1 lg:grid-cols-4 gap-6 section-anchor" id="all-section">
+
+                <!-- All apps (3 cols) -->
+                <div class="lg:col-span-3">
+                    <div class="mb-4 flex items-end justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl">💿</span>
+                                <h2 class="text-2xl font-bold">All Apps</h2>
+                            </div>
+                            <p class="text-sm text-muted mt-1">Full catalog — sorted alphabetically</p>
+                        </div>
+                        <div class="hidden sm:flex items-center gap-2">
+                            <label for="category-filter" class="text-xs font-medium text-muted">Filter:</label>
+                            <select id="category-filter" class="surface border border-themed rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30" style="color: var(--text);">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="apps-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+
+                <!-- Sidebar (1 col, sticky) -->
+                <aside class="lg:col-span-1">
+                    <div class="sticky-sidebar space-y-4">
+
+                        <!-- Featured widget -->
+                        <div class="sidebar-widget">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="text-lg">⭐</span>
+                                <h3 class="text-sm font-bold uppercase tracking-wide text-muted">Featured</h3>
+                            </div>
+                            <div id="featured-widget"></div>
+                        </div>
+
+                        <!-- Top rated widget -->
+                        <div class="sidebar-widget">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="text-lg">📈</span>
+                                <h3 class="text-sm font-bold uppercase tracking-wide text-muted">Editor's Picks</h3>
+                            </div>
+                            <div id="editors-picks-widget" class="flex flex-col gap-3"></div>
+                        </div>
+
+                        <!-- Sidebar ad -->
+                        <div class="ad-slot ad-rectangle" id="ad-slot-sidebar"></div>
+
+                    </div>
+                </aside>
+            </section>
+        </div>
+    </main>
+
+    <!-- ============================================================
+         SEARCH RESULTS VIEW
+         ============================================================ -->
+    <main id="search-results-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="mb-6 flex items-end justify-between">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-bold">Search Results</h2>
+                <p id="search-results-count" class="text-sm text-muted mt-1"></p>
+            </div>
+            <button id="clear-search" class="text-sm font-medium text-brand hover:underline">Clear ✕</button>
+        </div>
+        <div id="search-results-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-themed surface mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="md:col-span-2">
+                    <div class="text-xl font-extrabold mb-2">SOFTWARE<span class="text-brand">HUB</span></div>
+                    <p class="text-sm text-muted max-w-md">A curated software repository directory with direct download mirrors from trusted sources. Built with vanilla JS + Supabase PostgREST.</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold mb-2">Quick Links</h4>
+                    <ul class="text-sm text-muted space-y-1">
+                        <li><a href="#hero-section" class="hover:text-brand">Featured</a></li>
+                        <li><a href="#categories-section" class="hover:text-brand">Categories</a></li>
+                        <li><a href="#all-section" class="hover:text-brand">All Apps</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold mb-2">About</h4>
+                    <p class="text-sm text-muted">No frameworks, no build step. Just one HTML file.</p>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-themed text-center text-xs text-muted">
+                &copy; <span id="footer-year"></span> SOFTWAREHUB. All trademarks belong to their respective owners.
+            </div>
+        </div>
+    </footer>
+
+    <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+
+    <!-- ============================================================
+         APP LOGIC
+         ============================================================ -->
+    <script>
+    /* 1. CONFIG */
+    const SUPABASE_PROJECT_URL = "https://ttokitwfthjrqzfabfwx.supabase.co";
+    const POSTGREST_URL        = SUPABASE_PROJECT_URL + "/rest/v1";
+    const SUPABASE_ANON_KEY    = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0b2tpdHdmdGhqcnF6ZmFiZnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTY5MDEsImV4cCI6MjA5OTA5MjkwMX0.TnF97qFxfZu17nZl7dqTK0jT0SBjIRwBBMg0dhQS5JU";
+    const POSTGREST_HEADERS = {
+        'apikey':        SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Content-Type':  'application/json',
+        'Accept':        'application/json',
+    };
+
+    /* 2. STATE */
+    let softwareRegistry = [];
+    let heroIndex = 0, heroTimer = null, heroSlides = [];
+
+    /* 3. DOM */
+    const $ = (id) => document.getElementById(id);
+    const loadingSpinnerEl  = $('loading-spinner');
+    const realContentEl     = $('real-content');
+    const errorBannerEl     = $('error-banner');
+    const errorMessageEl    = $('error-message');
+    const searchBarEl       = $('search-bar');
+    const resultCountEl     = $('result-count');
+    const heroTrackEl       = $('hero-track');
+    const heroDotsEl        = $('hero-dots');
+    const topTrendingEl     = $('top-trending-container');
+    const categoriesTilesEl = $('categories-tiles');
+    const appsContainerEl   = $('apps-container');
+    const categoryFilterEl  = $('category-filter');
+    const featuredWidgetEl  = $('featured-widget');
+    const editorsPicksEl    = $('editors-picks-widget');
+    const mainContentEl     = $('main-content');
+    const searchResultsView = $('search-results-view');
+    const searchResultsGrid = $('search-results-grid');
+    const searchResultsCount= $('search-results-count');
+    const clearSearchBtn    = $('clear-search');
+    const themeToggleBtn    = $('theme-toggle');
+    const themeIconSun      = $('theme-icon-sun');
+    const themeIconMoon     = $('theme-icon-moon');
+
+    /* 4. THEME */
+    function initTheme() {
+        const saved = localStorage.getItem('sh-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(saved ? saved === 'dark' : prefersDark);
+    }
+    function applyTheme(isDark) {
+        document.documentElement.classList.toggle('dark', isDark);
+        themeIconSun.classList.toggle('hidden', isDark);
+        themeIconMoon.classList.toggle('hidden', !isDark);
+        localStorage.setItem('sh-theme', isDark ? 'dark' : 'light');
+    }
+    themeToggleBtn.addEventListener('click', () => applyTheme(!document.documentElement.classList.contains('dark')));
+    initTheme();
+
+    /* 5. FETCH */
+    async function fetchSoftwares() {
+        try {
+            errorBannerEl.classList.add('hidden');
+            const url = POSTGREST_URL + '/softwares?select=*&order=title.asc';
+            console.log('[SOFTWAREHUB] Fetching from:', url);
+            const response = await fetch(url, { method:'GET', headers: POSTGREST_HEADERS });
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`HTTP ${response.status} ${response.statusText} — ${errText}`);
+            }
+            const data = await response.json();
+            softwareRegistry = Array.isArray(data) ? data : [];
+            console.log('[SOFTWAREHUB] Fetched', softwareRegistry.length, 'rows.');
+        } catch (err) {
+            console.error('[SOFTWAREHUB] Database connection error:', err);
+            loadingSpinnerEl.innerHTML = `
+                <div class="flex flex-col items-center text-center" style="max-width: 480px;">
+                    <svg class="w-12 h-12 text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                    </svg>
+                    <p class="text-lg font-semibold text-red-600 dark:text-red-400">Database connection error.</p>
+                    <p class="text-sm text-red-500 mt-2" style="word-break:break-word;">${escapeHtml(err.message || String(err))}</p>
+                </div>
+            `;
+            errorMessageEl.textContent = 'Failed to fetch catalog. Check console (F12).';
+            errorBannerEl.classList.remove('hidden');
+            return;
+        }
+
+        loadingSpinnerEl.classList.add('hidden');
+        realContentEl.classList.remove('hidden');
+
+        heroSlides = softwareRegistry.slice(0, 5);
+        const trending = softwareRegistry.slice(0, 6);
+        renderHero(heroSlides);
+        renderTopTrending(trending);
+        renderCategoryTiles(softwareRegistry);
+        renderAllApps(softwareRegistry);
+        populateCategoryFilter(softwareRegistry);
+        renderFeaturedWidget(softwareRegistry[0]);
+        renderEditorsPicks(softwareRegistry.slice(5, 9));
+        resultCountEl.textContent = `${softwareRegistry.length} apps`;
+    }
+
+    /* 6. HERO SLIDER */
+    function renderHero(slides) {
+        if (!slides.length) {
+            heroTrackEl.innerHTML = `
+                <div class="hero-slide">
+                    <div class="hero-gradient p-10 text-white h-full flex items-center">
+                        <div>
+                            <h2 class="text-3xl font-extrabold mb-2">Welcome to SOFTWAREHUB</h2>
+                            <p class="text-white/80">No featured apps yet. Add some to your Supabase catalog!</p>
+                        </div>
+                    </div>
+                </div>`;
+            return;
+        }
+        heroTrackEl.innerHTML = slides.map(item => `
+            <div class="hero-slide">
+                <div class="hero-gradient relative p-8 sm:p-12 text-white h-full flex items-center overflow-hidden">
+                    <div class="hero-bg-icon">💿</div>
+                    <div class="relative z-10 flex items-center gap-6 sm:gap-10 max-w-full">
+                        <img src="${escapeHtml(item.icon && item.icon.trim() ? item.icon : 'https://placehold.co/200')}"
+                             alt="${escapeHtml(item.title || '')}"
+                             onerror="this.onerror=null; this.src='https://placehold.co/200';"
+                             class="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl object-cover bg-white/20 backdrop-blur ring-2 ring-white/30 flex-shrink-0" />
+                        <div class="min-w-0">
+                            <div class="inline-block text-xs font-semibold uppercase tracking-wider bg-white/20 backdrop-blur px-2 py-0.5 rounded-full mb-2">
+                                ${escapeHtml(item.category || 'Featured')}
+                            </div>
+                            <h2 class="text-2xl sm:text-4xl font-extrabold mb-2 leading-tight sh-clamp-1">${escapeHtml(item.title || 'Untitled')}</h2>
+                            <p class="text-white/85 text-sm sm:text-base mb-4 sh-clamp-2 max-w-xl">${escapeHtml(item.description || '')}</p>
+                            <div class="flex items-center gap-4 text-xs sm:text-sm text-white/80 mb-4">
+                                <span class="inline-flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h10M7 12h10M7 17h6M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2z" /></svg>
+                                    v${escapeHtml(item.version || '—')}
+                                </span>
+                                <span class="inline-flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h18" /></svg>
+                                    ${escapeHtml(item.size || '—')}
+                                </span>
+                            </div>
+                            <a href="${escapeHtml(item.download_url || '#')}" target="_blank" rel="noopener noreferrer"
+                               class="inline-flex items-center gap-2 bg-white text-brand-dark font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-white/90 transition">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                ${getButtonLabel(item.download_url)}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        heroDotsEl.innerHTML = slides.map((_, i) =>
+            `<span class="hero-dot ${i === 0 ? 'active' : ''}" data-i="${i}"></span>`
+        ).join('');
+        heroDotsEl.querySelectorAll('.hero-dot').forEach(d =>
+            d.addEventListener('click', e => goToHeroSlide(parseInt(e.target.dataset.i, 10)))
+        );
+        startHeroAutoplay();
+    }
+    function goToHeroSlide(i) {
+        if (!heroSlides.length) return;
+        heroIndex = (i + heroSlides.length) % heroSlides.length;
+        heroTrackEl.style.transform = `translateX(-${heroIndex * 100}%)`;
+        heroDotsEl.querySelectorAll('.hero-dot').forEach((d, idx) =>
+            d.classList.toggle('active', idx === heroIndex)
+        );
+    }
+    const nextHero = () => goToHeroSlide(heroIndex + 1);
+    const prevHero = () => goToHeroSlide(heroIndex - 1);
+    function startHeroAutoplay() {
+        if (heroTimer) clearInterval(heroTimer);
+        heroTimer = setInterval(nextHero, 6000);
+    }
+    $('hero-next').addEventListener('click', () => { nextHero(); startHeroAutoplay(); });
+    $('hero-prev').addEventListener('click', () => { prevHero(); startHeroAutoplay(); });
+    $('hero-section').addEventListener('mouseenter', () => { if (heroTimer) clearInterval(heroTimer); });
+    $('hero-section').addEventListener('mouseleave', startHeroAutoplay);
+
+    /* 7. TOP TRENDING (right column of hero row) */
+    function renderTopTrending(items) {
+        if (!items.length) {
+            topTrendingEl.innerHTML = `<p class="text-muted text-sm">No trending apps available.</p>`;
+            return;
+        }
+        topTrendingEl.innerHTML = items.map((item, i) => `
+            <a href="${escapeHtml(item.download_url || '#')}" target="_blank" rel="noopener noreferrer" class="trend-row">
+                <span class="trend-rank">${i + 1}</span>
+                <img src="${escapeHtml(item.icon && item.icon.trim() ? item.icon : 'https://placehold.co/80')}"
+                     alt="${escapeHtml(item.title || '')}"
+                     onerror="this.onerror=null; this.src='https://placehold.co/80';"
+                     class="w-9 h-9 rounded-lg object-cover surface-subtle ring-1 border-themed flex-shrink-0" loading="lazy" />
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-semibold sh-clamp-1">${escapeHtml(item.title || 'Untitled')}</p>
+                    <p class="text-xs text-muted sh-clamp-1">${escapeHtml(item.category || '')} • v${escapeHtml(item.version || '—')}</p>
+                </div>
+            </a>
+        `).join('');
+    }
+
+    /* 8. CATEGORY TILES (grid of clickable category cards) */
+    const CAT_EMOJI = { Development:'💻', Design:'🎨', Multimedia:'🎬', Productivity:'⚡', Games:'🎮', Security:'🔒', Utilities:'🛠️', Internet:'🌐', Office:'📊', Education:'📚' };
+    function pickCatEmoji(cat) {
+        if (!cat) return '📦';
+        for (const k in CAT_EMOJI) if (cat.toLowerCase().includes(k.toLowerCase())) return CAT_EMOJI[k];
+        return '📦';
+    }
+    function renderCategoryTiles(items) {
+        const groups = {};
+        items.forEach(it => {
+            const c = it.category || 'Uncategorized';
+            if (!groups[c]) groups[c] = [];
+            groups[c].push(it);
+        });
+        const cats = Object.keys(groups).sort();
+        if (!cats.length) {
+            categoriesTilesEl.innerHTML = `<p class="text-muted col-span-full">No categories available.</p>`;
+            return;
+        }
+        categoriesTilesEl.innerHTML = cats.map(cat => `
+            <a href="#all-section" data-cat="${escapeHtml(cat)}" class="cat-tile cat-clickable">
+                <div class="cat-tile-icon">${pickCatEmoji(cat)}</div>
+                <div class="relative z-10">
+                    <span class="cat-badge cat-${hashCategory(cat)} text-xs font-bold px-2.5 py-1 rounded-full">${escapeHtml(cat)}</span>
+                    <p class="mt-2 text-base font-semibold">${groups[cat].length} app${groups[cat].length === 1 ? '' : 's'}</p>
+                    <p class="text-xs text-muted mt-0.5">Browse ${escapeHtml(cat.toLowerCase())}</p>
+                </div>
+            </a>
+        `).join('');
+
+        // Wire up tile clicks → filter the all-apps grid
+        categoriesTilesEl.querySelectorAll('.cat-clickable').forEach(tile => {
+            tile.addEventListener('click', e => {
+                e.preventDefault();
+                const cat = tile.dataset.cat;
+                categoryFilterEl.value = cat;
+                categoryFilterEl.dispatchEvent(new Event('change'));
+                document.getElementById('all-section').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    }
+
+    /* 9. ALL APPS GRID */
+    function renderAllApps(items) {
+        if (!items.length) {
+            appsContainerEl.innerHTML = `
+                <div class="col-span-full text-center py-12 text-muted">
+                    <p class="text-lg font-semibold">No apps in catalog</p>
+                    <p class="text-sm mt-1">Add rows to your Supabase <code>softwares</code> table to see them here.</p>
+                </div>`;
+            return;
+        }
+        appsContainerEl.innerHTML = items.map(item => buildCardHTML(item)).join('');
+    }
+
+    function buildCardHTML(item) {
+        const iconSrc = item.icon && item.icon.trim() !== '' ? item.icon : 'https://placehold.co/150';
+        return `
+            <article class="sh-card surface border rounded-2xl shadow-card overflow-hidden flex flex-col">
+                <div class="p-4 flex items-start gap-3">
+                    <img src="${escapeHtml(iconSrc)}" alt="${escapeHtml(item.title || '')}"
+                         onerror="this.onerror=null; this.src='https://placehold.co/150';"
+                         class="w-14 h-14 rounded-xl object-cover surface-subtle ring-1 border-themed flex-shrink-0" loading="lazy" />
+                    <div class="min-w-0 flex-1">
+                        <h3 class="text-sm font-semibold sh-clamp-1" title="${escapeHtml(item.title || '')}">${escapeHtml(item.title || 'Untitled')}</h3>
+                        <span class="cat-badge cat-${hashCategory(item.category)} inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full">${escapeHtml(item.category || 'Uncategorized')}</span>
+                    </div>
+                </div>
+                <div class="px-4 pb-3 flex-1">
+                    <p class="text-xs text-soft sh-clamp-2 leading-relaxed">${escapeHtml(item.description || 'No description available.')}</p>
+                </div>
+                <div class="px-4 pb-3 flex items-center gap-3 text-xs text-muted">
+                    <span class="inline-flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h10M7 12h10M7 17h6M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2z" /></svg>
+                        v${escapeHtml(item.version || '—')}
+                    </span>
+                    <span class="inline-flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h18" /></svg>
+                        ${escapeHtml(item.size || '—')}
+                    </span>
+                </div>
+                <div class="px-4 pb-4 pt-1 border-t border-soft mt-auto">
+                    <a href="${escapeHtml(item.download_url || '#')}" target="_blank" rel="noopener noreferrer"
+                       class="block w-full text-center text-xs font-semibold text-white bg-brand hover:bg-brand-dark rounded-full py-2 px-3 transition-colors focus:outline-none focus:ring-2 focus:ring-brand/40">
+                        ${getButtonLabel(item.download_url)}
+                    </a>
+                </div>
+            </article>`;
+    }
+
+    function populateCategoryFilter(items) {
+        const cats = [...new Set(items.map(i => i.category || 'Uncategorized'))].sort();
+        categoryFilterEl.innerHTML = '<option value="">All Categories</option>' +
+            cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    }
+    categoryFilterEl.addEventListener('change', e => {
+        const v = e.target.value;
+        const filtered = v ? softwareRegistry.filter(i => (i.category || 'Uncategorized') === v) : softwareRegistry;
+        renderAllApps(filtered);
+    });
+
+    /* 10. SIDEBAR WIDGETS */
+    function renderFeaturedWidget(item) {
+        if (!item) { featuredWidgetEl.innerHTML = `<p class="text-muted text-sm">No featured app.</p>`; return; }
+        const iconSrc = item.icon && item.icon.trim() ? item.icon : 'https://placehold.co/120';
+        featuredWidgetEl.innerHTML = `
+            <a href="${escapeHtml(item.download_url || '#')}" target="_blank" rel="noopener noreferrer" class="block group">
+                <img src="${escapeHtml(iconSrc)}" alt="${escapeHtml(item.title || '')}"
+                     onerror="this.onerror=null; this.src='https://placehold.co/120';"
+                     class="w-full h-32 rounded-xl object-cover mb-3 surface-subtle" loading="lazy" />
+                <h4 class="font-semibold text-sm sh-clamp-1 group-hover:text-brand transition">${escapeHtml(item.title || 'Untitled')}</h4>
+                <p class="text-xs text-muted mt-1 sh-clamp-2">${escapeHtml(item.description || '')}</p>
+                <div class="mt-2 flex items-center gap-2 text-xs">
+                    <span class="cat-badge cat-${hashCategory(item.category)} font-medium px-2 py-0.5 rounded-full">${escapeHtml(item.category || '')}</span>
+                    <span class="text-muted">v${escapeHtml(item.version || '—')}</span>
+                </div>
+            </a>`;
+    }
+    function renderEditorsPicks(items) {
+        if (!items.length) { editorsPicksEl.innerHTML = `<p class="text-muted text-sm">No picks available.</p>`; return; }
+        editorsPicksEl.innerHTML = items.map(item => `
+            <a href="${escapeHtml(item.download_url || '#')}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 group">
+                <img src="${escapeHtml(item.icon && item.icon.trim() ? item.icon : 'https://placehold.co/60')}"
+                     alt="${escapeHtml(item.title || '')}"
+                     onerror="this.onerror=null; this.src='https://placehold.co/60';"
+                     class="w-9 h-9 rounded-lg object-cover surface-subtle flex-shrink-0" loading="lazy" />
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs font-semibold sh-clamp-1 group-hover:text-brand transition">${escapeHtml(item.title || '')}</p>
+                    <p class="text-xs text-muted sh-clamp-1">${escapeHtml(item.category || '')} • ${escapeHtml(item.size || '—')}</p>
+                </div>
+            </a>
+        `).join('');
+    }
+
+    /* 11. SEARCH */
+    searchBarEl.addEventListener('input', event => {
+        const query = event.target.value.trim().toLowerCase();
+        if (query === '') {
+            searchResultsView.classList.add('hidden');
+            mainContentEl.classList.remove('hidden');
+            resultCountEl.textContent = `${softwareRegistry.length} apps`;
+            return;
+        }
+        const filtered = softwareRegistry.filter(item => {
+            const title       = (item.title       || '').toLowerCase();
+            const category    = (item.category    || '').toLowerCase();
+            const description = (item.description || '').toLowerCase();
+            return title.includes(query) || category.includes(query) || description.includes(query);
+        });
+        mainContentEl.classList.add('hidden');
+        searchResultsView.classList.remove('hidden');
+        searchResultsCount.textContent = `${filtered.length} result${filtered.length === 1 ? '' : 's'} for "${query}"`;
+        resultCountEl.textContent = `${filtered.length} matches`;
+        if (filtered.length === 0) {
+            searchResultsGrid.innerHTML = `
+                <div class="col-span-full text-center py-16 text-muted">
+                    <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" />
+                    </svg>
+                    <p class="text-lg font-semibold">No matches found</p>
+                    <p class="text-sm mt-1">Try a different keyword.</p>
+                </div>`;
+        } else {
+            searchResultsGrid.innerHTML = filtered.map(item => buildCardHTML(item)).join('');
+        }
+    });
+    clearSearchBtn.addEventListener('click', () => {
+        searchBarEl.value = '';
+        searchBarEl.dispatchEvent(new Event('input'));
+        searchBarEl.focus();
+    });
+
+    /* 12. UTILS */
+    function escapeHtml(value) {
+        if (value === null || value === undefined) return '';
+        return String(value)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function getButtonLabel(downloadUrl) {
+        const url = (downloadUrl || '').toLowerCase();
+        if (url.includes('mediafire.com') || url.includes('drive.google.com')) return 'Download Mirror';
+        return 'Direct Download';
+    }
+    function hashCategory(cat) {
+        const s = String(cat || '');
+        let h = 0;
+        for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+        return Math.abs(h) % 8;
+    }
+
+    /* 13. BOOTSTRAP */
+    fetchSoftwares();
+    </script>
+</body>
+</html>
