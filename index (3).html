@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<!--
+================================================================================
+  DevFetch v7 - Clean Store Edition
+--------------------------------------------------------------------------------
+  Design reference: APKPure / Google Play / Microsoft Store
+  Dials: VARIANCE 4 / MOTION 3 / DENSITY 7
+  Language: native CSS + Tailwind, system font stack, single blue accent.
+
+  Auto-download:
+  - Google Drive URLs auto-transform to direct download (uc?export=download)
+  - MediaFire URLs use a proxy (set MEDIAFIRE_PROXY_URL below) to extract
+    the direct file link and trigger download via hidden iframe
+  - Other URLs open in new tab
+
+  To enable MediaFire auto-download, deploy the Cloudflare Worker from
+  mediafire-proxy-worker.js and set MEDIAFIRE_PROXY_URL to its URL.
+================================================================================
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google-site-verification" content="XVOLIAIwBAGuBaMy57iWpqccmTDFJRja4ZRPsmhKIXQ" />
+    <link rel="icon" type="image/png" sizes="48x48" href="data:image/png;base64,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">
+    <link rel="apple-touch-icon" href="data:image/png;base64,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">
+    <meta name="description" content="DevFetch - curated software catalog with direct download mirrors." />
+    <title>DevFetch - Catalog</title>
+
+    <!-- Adsterra: Popunder (page-wide, fires on first click anywhere on any page) -->
+    <script async src="https://pl30328576.effectivecpmnetwork.com/ba/01/b5/ba01b54234d5714119ff137df7324616.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: {
+                fontFamily: {
+                    sans: ['ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                    mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                },
+            } },
+        };
+    </script>
+
+    <style>
+        :root {
+            --bg: #f8f9fa;
+            --surface: #ffffff;
+            --surface-2: #f1f3f4;
+            --border: #e8eaed;
+            --border-strong: #dadce0;
+            --text: #202124;
+            --text-soft: #3c4043;
+            --text-muted: #5f6368;
+            --accent: #1a73e8;
+            --accent-hover: #1557b0;
+            --accent-soft: #e8f0fe;
+            --star: #f9ab00;
+        }
+        html.dark {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface-2: #21262d;
+            --border: #30363d;
+            --border-strong: #484f58;
+            --text: #e6edf3;
+            --text-soft: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent-hover: #79b8ff;
+            --accent-soft: #1c2937;
+            --star: #d29922;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-feature-settings: "ss01", "cv11";
+            transition: background-color .15s ease, color .15s ease;
+        }
+
+        .surface       { background: var(--surface); border-color: var(--border); }
+        .surface-2     { background: var(--surface-2); }
+        .border-tk     { border-color: var(--border); }
+        .border-tk-strong { border-color: var(--border-strong); }
+        .text-soft     { color: var(--text-soft); }
+        .text-muted    { color: var(--text-muted); }
+        .text-accent   { color: var(--accent); }
+        .bg-accent     { background: var(--accent); }
+        .bg-accent-soft{ background: var(--accent-soft); }
+        .border-accent { border-color: var(--accent); }
+
+        @keyframes sh-shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%);
+            background-size: 200% 100%;
+            animation: sh-shimmer 1.6s infinite linear;
+            border-radius: 6px;
+        }
+        @media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
+
+        /* ===== Shape Consistency Lock =====
+           Three documented radius roles (APKPure / Play Store convention):
+           - rounded-md (6px):  all rectangular UI (cards, buttons, inputs, ad slots)
+           - rounded-2xl (16px): app icons only (squircle, matches store convention)
+           - rounded-full:       pill-shaped interactives (search bar, category tabs,
+                                  theme toggle, hero dots)
+           No other radius values appear on the page. */
+        .app-card { transition: border-color .15s ease, box-shadow .15s ease; }
+        .app-card:hover {
+            border-color: var(--border-strong);
+            box-shadow: 0 1px 6px rgba(32,33,36,0.08);
+        }
+
+        .clamp-1 { display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
+        .clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .clamp-3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+
+        .theme-toggle {
+            width: 36px; height: 20px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            position: relative; cursor: pointer;
+            transition: background-color .15s ease;
+        }
+        .theme-toggle-thumb {
+            position: absolute; top: 1px; left: 1px;
+            width: 16px; height: 16px;
+            background: var(--text); border-radius: 999px;
+            transition: transform .2s cubic-bezier(.4,0,.2,1);
+        }
+        html.dark .theme-toggle-thumb { transform: translateX(16px); }
+
+        .hero-shell { border: 1px solid var(--border); background: var(--surface); }
+        .hero-track {
+            display: flex;
+            transition: transform .5s cubic-bezier(.4, 0, .2, 1);
+            will-change: transform;
+        }
+        .hero-slide { flex: 0 0 100%; min-width: 100%; }
+        .hero-dot {
+            width: 6px; height: 6px; border-radius: 999px;
+            background: var(--border-strong);
+            cursor: pointer; transition: background-color .15s, width .2s;
+        }
+        .hero-dot.active { background: var(--accent); width: 18px; }
+        .hero-arrow {
+            border: 1px solid var(--border);
+            background: var(--surface); color: var(--text);
+            transition: background-color .15s, border-color .15s;
+        }
+        .hero-arrow:hover { background: var(--surface-2); border-color: var(--border-strong); }
+
+        .ad-slot {
+            background: var(--surface-2);
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted);
+            font-size: 10px; font-family: var(--font-mono);
+            text-transform: uppercase; letter-spacing: .08em;
+            min-height: 90px; position: relative;
+        }
+        .ad-slot.ad-rect { min-height: 250px; max-width: 300px; }
+        .ad-slot.ad-leaderboard { min-height: 90px; }
+        .ad-slot::before { content: 'ad'; position: absolute; top: 6px; left: 8px; opacity: .5; }
+        .ad-slot:has(iframe, ins, img) { background: transparent; border: 0; }
+        .ad-slot:has(iframe, ins, img)::before { display: none; }
+
+        @media (min-width: 1024px) {
+            .sidebar-sticky { position: sticky; top: 116px; }
+        }
+
+        section { scroll-margin-top: 120px; }
+
+        .scroll-x { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+        .scroll-x::-webkit-scrollbar { height: 4px; }
+        .scroll-x::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+        .scroll-x::-webkit-scrollbar-track { background: transparent; }
+
+        body.view-home #view-detail,
+        body.view-home #view-category,
+        body.view-home #view-requests,
+        body.view-detail #view-home,
+        body.view-detail #view-category,
+        body.view-detail #view-requests,
+        body.view-category #view-home,
+        body.view-category #view-detail,
+        body.view-category #view-requests,
+        body.view-requests #view-home,
+        body.view-requests #view-detail,
+        body.view-requests #view-category { display: none; }
+
+        .input {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 8px;
+            padding: 6px 30px 6px 12px;
+            font-size: 13px; appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235f6368' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+        .input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+        .stat-num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+        .btn-primary {
+            background: var(--accent); color: #fff;
+            border: 1px solid var(--accent);
+            transition: background-color .15s, transform .1s;
+        }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-primary:active { transform: scale(0.98); }
+
+        .btn-secondary {
+            background: var(--surface); color: var(--text);
+            border: 1px solid var(--border);
+            transition: background-color .15s, border-color .15s, transform .1s;
+        }
+        .btn-secondary:hover { background: var(--surface-2); border-color: var(--border-strong); }
+        .btn-secondary:active { transform: scale(0.98); }
+
+        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+            outline: 2px solid var(--accent); outline-offset: 2px;
+        }
+
+        .prose-app p { margin-bottom: 1em; line-height: 1.7; }
+        .prose-app p:last-child { margin-bottom: 0; }
+        .prose-app h3 { font-size: 15px; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
+
+        .crumb { color: var(--text-muted); }
+        .crumb:hover { color: var(--accent); }
+
+        .spec-row { display: grid; grid-template-columns: 130px 1fr; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+        .spec-row:last-child { border-bottom: 0; }
+        .spec-key { color: var(--text-muted); }
+        .spec-val { color: var(--text); font-variant-numeric: tabular-nums; }
+
+        .star-row { display: inline-flex; gap: 1px; align-items: center; }
+        .star {
+            width: 13px; height: 13px;
+            color: var(--border-strong);
+        }
+        .star.filled { color: var(--star); }
+        .star.half {
+            background: linear-gradient(90deg, var(--star) 50%, transparent 50%);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .gallery-main {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--surface-2);
+            aspect-ratio: 16 / 9;
+            position: relative;
+        }
+        .gallery-main img {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            background: var(--surface-2);
+        }
+        .gallery-thumbs {
+            display: flex; gap: 8px;
+            margin-top: 8px;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+        .gallery-thumb {
+            flex: 0 0 96px;
+            height: 60px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            background: var(--surface-2);
+            transition: border-color .15s;
+        }
+        .gallery-thumb:hover { border-color: var(--border-strong); }
+        .gallery-thumb.active { border-color: var(--accent); border-width: 2px; }
+        .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+        .dl-chip {
+            display: inline-flex; align-items: center; gap: 3px;
+            font-size: 11px; color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ===== Category tab bar ===== */
+        .cat-tab {
+            white-space: nowrap;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background-color .15s, color .15s;
+            text-decoration: none;
+        }
+        .cat-tab:hover { background: var(--surface-2); color: var(--text); }
+        .cat-tab.active { background: var(--accent); color: #fff; }
+
+        /* ===== Toast ===== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text);
+            color: var(--bg);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            max-width: 90vw;
+            animation: toast-in .3s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes toast-in {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .toast.toast-fade {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+            transition: opacity .3s, transform .3s;
+        }
+        .toast-link {
+            color: var(--accent);
+            text-decoration: underline;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .toast { animation: none; }
+            .toast.toast-fade { transition: none; }
+        }
+
+        /* ===== Tabs on detail page ===== */
+        .detail-tab {
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: color .15s, border-color .15s;
+        }
+        .detail-tab:hover { color: var(--text); }
+        .detail-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .detail-tab-panel { display: none; }
+        .detail-tab-panel.active { display: block; }
+
+        /* Download button on cards */
+        .card-dl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color .15s;
+            text-decoration: none;
+        }
+        .card-dl-btn:hover { background: var(--accent); color: #fff; }
+
+        /* ===== Request button (reusable) ===== */
+        .request-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color .15s, color .15s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .request-btn:hover { background: var(--accent); color: #fff; }
+
+        /* ===== Modal overlay ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: modal-fade-in .2s ease;
+        }
+        @keyframes modal-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 4px;
+            border-radius: 6px;
+            transition: background-color .15s;
+        }
+        .modal-close:hover { background: var(--surface-2); }
+
+        /* ===== Form fields ===== */
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 14px;
+        }
+        .form-field label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-soft);
+        }
+        .form-field input,
+        .form-field textarea,
+        .form-field select {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color .15s, box-shadow .15s;
+        }
+        .form-field input:focus,
+        .form-field textarea:focus,
+        .form-field select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+        .form-field textarea { resize: vertical; min-height: 80px; }
+
+        /* ===== Star rating input ===== */
+        .star-input {
+            display: flex;
+            gap: 4px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .star-input .star-btn {
+            color: var(--border-strong);
+            transition: color .15s, transform .1s;
+            cursor: pointer;
+            user-select: none;
+            line-height: 1;
+        }
+        .star-input .star-btn:hover { transform: scale(1.15); }
+        .star-input .star-btn.active { color: var(--star); }
+
+        /* ===== Review card ===== */
+        .review-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            background: var(--surface);
+        }
+        .review-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .review-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .review-date {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .review-text {
+            font-size: 13px;
+            color: var(--text-soft);
+            line-height: 1.6;
+        }
+
+        /* ===== Request card ===== */
+        .request-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 10px;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .request-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .request-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .request-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .request-desc {
+            font-size: 13px;
+            color: var(--text-soft);
+            line-height: 1.5;
+        }
+        .request-status {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .request-status.pending { background: #fef3c7; color: #92400e; }
+        .request-status.approved { background: #d1fae5; color: #065f46; }
+        .request-status.rejected { background: #fee2e2; color: #991b1b; }
+
+        /* ===== Success message ===== */
+        .form-success {
+            background: #d1fae5;
+            border: 1px solid #6ee7b7;
+            color: #065f46;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        /* ===== Welcome popup (shows once per session) ===== */
+        .welcome-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: welcome-fade-in .25s ease;
+        }
+        @keyframes welcome-fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .welcome-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            max-width: 460px;
+            width: 100%;
+            padding: 28px 24px 22px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            position: relative;
+            animation: welcome-pop .35s cubic-bezier(.34, 1.56, .64, 1);
+        }
+        @keyframes welcome-pop {
+            from { transform: scale(.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .welcome-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+        }
+        .welcome-title {
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+        .welcome-subtitle {
+            font-size: 12px;
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+        }
+        .welcome-body {
+            font-size: 13px;
+            color: var(--text-soft);
+            line-height: 1.65;
+            margin-bottom: 18px;
+        }
+        .welcome-body p { margin-bottom: 10px; }
+        .welcome-body p:last-child { margin-bottom: 0; }
+        .welcome-body strong { color: var(--text); font-weight: 600; }
+        .welcome-cta {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 11px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color .15s;
+        }
+        .welcome-cta:hover { background: var(--accent-hover); }
+        .welcome-skip {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            padding: 10px;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: color .15s;
+        }
+        .welcome-skip:hover { color: var(--text); }
+        @media (prefers-reduced-motion: reduce) {
+            .welcome-overlay, .welcome-box { animation: none; }
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased view-home">
+
+    <!-- ===== Welcome popup (shows once per browser session) ===== -->
+    <div id="welcome-popup" class="welcome-overlay hidden">
+        <div class="welcome-box">
+            <div class="welcome-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </div>
+            <h2 class="welcome-title">Welcome to DevFetch</h2>
+            <p class="welcome-subtitle">A quick note before you dive in</p>
+            <div class="welcome-body">
+                <p>Hey there, developer. <strong>DevFetch is free</strong>, and it will stay that way. Every download, every review, every request you submit is on the house.</p>
+                <p>To keep the lights on and the servers running, we show occasional <strong>sponsored ads</strong> (popunders and a smart-link offer in the sidebar). They help us pay for hosting, Supabase, and bandwidth.</p>
+                <p><strong>Your requested apps get built for free.</strong> Submit any software via the Requests page and our team will package and add it to the catalog, no charge.</p>
+            </div>
+            <button id="welcome-continue" class="welcome-cta">Continue to catalog</button>
+            <button id="welcome-dismiss" class="welcome-skip">Maybe later</button>
+        </div>
+    </div>
+
+    <!-- ===== NAV ===== -->
+    <header class="sticky top-0 z-50 border-b border-tk" style="background: var(--surface);">
+        <div class="max-w-[1400px] mx-auto px-5 h-14 flex items-center gap-4">
+            <a href="#/" class="font-semibold text-[15px] tracking-tight flex items-center gap-2" style="color: var(--text);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="16 18 22 12 16 6"/>
+                    <polyline points="8 6 2 12 8 18"/>
+                </svg>
+                Dev<span style="color: var(--accent);">Fetch</span>
+            </a>
+
+            <div class="flex-1 max-w-lg mx-auto relative">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"/>
+                    <path d="m20 20-3.5-3.5"/>
+                </svg>
+                <input
+                    id="search-bar" type="search" autocomplete="off"
+                    placeholder="Search apps, games, tools"
+                    class="w-full pl-9 pr-3 py-1.5 text-[13px] rounded-full border border-tk focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
+                    style="background: var(--surface-2); color: var(--text);"
+                />
+            </div>
+
+            <div class="flex items-center gap-3">
+                <span id="result-count" class="hidden sm:inline text-[12px] text-muted stat-num"></span>
+                <a href="#/requests" class="request-btn hidden sm:inline-flex">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Request app
+                </a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <span class="theme-toggle-thumb"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Category tab bar (APKPure-style, sticky below nav) -->
+        <div id="cat-tab-bar" class="border-t border-tk hidden" style="background: var(--surface);">
+            <div class="max-w-[1400px] mx-auto px-5 h-11 flex items-center gap-1 overflow-x-auto scroll-x">
+                <a href="#/" class="cat-tab active" data-cat="">All</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================================
+         VIEW: HOME
+         ======================================================== -->
+    <main id="view-home" class="max-w-[1400px] mx-auto px-5 py-6">
+        <div id="loading" class="space-y-6">
+            <div class="grid lg:grid-cols-[1.6fr_1fr] gap-4">
+                <div class="hero-shell rounded-md p-6 space-y-3 h-[260px]">
+                    <div class="skeleton h-4 w-20"></div>
+                    <div class="skeleton h-8 w-3/4"></div>
+                    <div class="skeleton h-4 w-full"></div>
+                    <div class="skeleton h-4 w-5/6"></div>
+                    <div class="skeleton h-8 w-28 rounded-md mt-3"></div>
+                </div>
+                <div class="hero-shell rounded-md p-5 space-y-3">
+                    <div class="skeleton h-4 w-20"></div>
+                    <div class="space-y-2.5 pt-1">
+                        <div class="flex gap-3 items-center"><div class="skeleton w-8 h-8 rounded-md"></div><div class="flex-1 space-y-1.5"><div class="skeleton h-3 w-3/4"></div><div class="skeleton h-2 w-1/2"></div></div></div>
+                        <div class="flex gap-3 items-center"><div class="skeleton w-8 h-8 rounded-md"></div><div class="flex-1 space-y-1.5"><div class="skeleton h-3 w-3/4"></div><div class="skeleton h-2 w-1/2"></div></div></div>
+                        <div class="flex gap-3 items-center"><div class="skeleton w-8 h-8 rounded-md"></div><div class="flex-1 space-y-1.5"><div class="skeleton h-3 w-3/4"></div><div class="skeleton h-2 w-1/2"></div></div></div>
+                        <div class="flex gap-3 items-center"><div class="skeleton w-8 h-8 rounded-md"></div><div class="flex-1 space-y-1.5"><div class="skeleton h-3 w-3/4"></div><div class="skeleton h-2 w-1/2"></div></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div class="border border-tk rounded-md p-3 space-y-2"><div class="skeleton w-12 h-12 rounded-md"></div><div class="skeleton h-3 w-3/4"></div><div class="skeleton h-2 w-1/2"></div></div>
+                <div class="border border-tk rounded-md p-3 space-y-2"><div class="skeleton w-12 h-12 rounded-md"></div><div class="skeleton h-3 w-3/4"></div><div class="skeleton h-2 w-1/2"></div></div>
+                <div class="border border-tk rounded-md p-3 space-y-2"><div class="skeleton w-12 h-12 rounded-md"></div><div class="skeleton h-3 w-3/4"></div><div class="skeleton h-2 w-1/2"></div></div>
+                <div class="border border-tk rounded-md p-3 space-y-2"><div class="skeleton w-12 h-12 rounded-md"></div><div class="skeleton h-3 w-3/4"></div><div class="skeleton h-2 w-1/2"></div></div>
+                <div class="border border-tk rounded-md p-3 space-y-2"><div class="skeleton w-12 h-12 rounded-md"></div><div class="skeleton h-3 w-3/4"></div><div class="skeleton h-2 w-1/2"></div></div>
+            </div>
+        </div>
+
+        <div id="error-banner" class="hidden mb-6 rounded-md border p-4" style="background: #fce8e6; border-color: #f28b82; color: #c5221f;">
+            <p id="error-message" class="text-sm font-medium"></p>
+            <p class="text-xs mt-1 opacity-80" id="error-detail"></p>
+        </div>
+
+        <div id="catalog" class="hidden space-y-8">
+            <!-- Hero + Top Charts -->
+            <section class="grid lg:grid-cols-[1.6fr_1fr] gap-4">
+                <div class="hero-shell rounded-md overflow-hidden relative">
+                    <div id="hero-track" class="hero-track"></div>
+                    <button id="hero-prev" class="hero-arrow absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center z-10" aria-label="Previous">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <button id="hero-next" class="hero-arrow absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center z-10" aria-label="Next">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                    <div id="hero-dots" class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10"></div>
+                </div>
+                <aside class="hero-shell rounded-md p-5">
+                    <div class="flex items-baseline justify-between mb-3">
+                        <h2 class="text-[13px] font-semibold tracking-tight">Top charts</h2>
+                        <span class="text-[11px] text-muted">By downloads</span>
+                    </div>
+                    <ol id="top-charts" class="space-y-0"></ol>
+                </aside>
+            </section>
+
+            <div class="ad-slot ad-leaderboard" id="ad-home-1"></div>
+
+            <!-- All apps grid -->
+            <section>
+                <div class="flex items-baseline justify-between mb-4">
+                    <h2 class="text-[15px] font-semibold tracking-tight">All apps <span id="apps-count" class="text-muted font-normal stat-num ml-1"></span></h2>
+                    <div class="flex items-center gap-2">
+                        <label for="sort-select" class="text-[11px] text-muted">Sort</label>
+                        <select id="sort-select" class="input py-1 text-[12px]">
+                            <option value="title">Name A to Z</option>
+                            <option value="downloads">Most downloaded</option>
+                            <option value="rating">Top rated</option>
+                            <option value="created">Newest first</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="apps-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"></div>
+            </section>
+
+            <!-- Spotlight + Recent sidebar -->
+            <section class="grid lg:grid-cols-[1fr_1fr] gap-4">
+                <div class="hero-shell rounded-md p-5">
+                    <h3 class="text-[13px] font-semibold mb-3">Spotlight</h3>
+                    <div id="spotlight"></div>
+                </div>
+                <div class="hero-shell rounded-md p-5">
+                    <h3 class="text-[13px] font-semibold mb-3">Recently added</h3>
+                    <div id="recent-list" class="space-y-3"></div>
+                </div>
+            </section>
+
+            <div class="ad-slot ad-leaderboard" id="ad-home-2"></div>
+
+            <!-- Request new software CTA -->
+            <section class="text-center py-8 border border-tk rounded-md surface">
+                <h2 class="text-[16px] font-semibold tracking-tight mb-2">Cannot find what you are looking for?</h2>
+                <p class="text-[13px] text-muted mb-4 max-w-md mx-auto">Request a new software and our team will review and add it to the catalog.</p>
+                <a href="#/requests" class="btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-[13px] font-medium rounded-md">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Request new software
+                </a>
+            </section>
+        </div>
+
+        <section id="search-results" class="space-y-4" style="display: none;">
+            <div class="flex items-baseline justify-between border-b border-tk pb-3">
+                <div>
+                    <h2 class="text-[15px] font-semibold tracking-tight">Search results</h2>
+                    <p id="search-count" class="text-[12px] text-muted mt-0.5"></p>
+                </div>
+                <button id="clear-search" class="text-[12px] text-accent hover:underline">Clear</button>
+            </div>
+            <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"></div>
+        </section>
+    </main>
+
+    <!-- ========================================================
+         VIEW: APP DETAIL
+         ======================================================== -->
+    <main id="view-detail" class="max-w-[1400px] mx-auto px-5 py-6">
+        <nav class="text-[12px] mb-6 flex items-center gap-1.5" aria-label="Breadcrumb">
+            <a href="#/" class="crumb">Catalog</a>
+            <span class="text-muted">/</span>
+            <a href="#/" class="crumb" id="detail-bc-cat">Category</a>
+            <span class="text-muted">/</span>
+            <span class="text-soft" id="detail-bc-title">App</span>
+        </nav>
+
+        <div class="ad-slot ad-leaderboard mb-6" id="ad-detail-1"></div>
+
+        <div id="detail-content" class="grid lg:grid-cols-[1fr_320px] gap-8">
+            <div>
+                <!-- App header -->
+                <div class="flex items-start gap-5 mb-6 pb-6 border-b border-tk">
+                    <img id="detail-icon" src="https://placehold.co/200" alt="" loading="lazy"
+                         onerror="this.onerror=null;this.src='https://placehold.co/200';"
+                         class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-tk object-cover flex-shrink-0" />
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-1" id="detail-title">App name</h1>
+                        <p class="text-[13px] text-muted mb-3" id="detail-category">Category</p>
+                        <div class="flex items-center gap-4 text-[12px] text-muted stat-num mb-4 flex-wrap">
+                            <span id="detail-meta">v1.0.0 / 95 MB</span>
+                            <span id="detail-rating-row" class="hidden items-center gap-1.5">
+                                <span class="star-row" id="detail-stars"></span>
+                                <span id="detail-rating-num"></span>
+                                <span class="text-muted" id="detail-rating-count"></span>
+                            </span>
+                            <span id="detail-downloads-row" class="dl-chip">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span id="detail-downloads-num">0</span> downloads
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button id="detail-download-primary"
+                               class="btn-primary inline-flex items-center gap-2 px-6 py-2.5 text-[14px] font-medium rounded-md">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span id="detail-download-label">Download</span>
+                            </button>
+                            <a id="detail-visit-link" href="#" target="_blank" rel="noopener noreferrer"
+                               class="btn-secondary inline-flex items-center gap-2 px-4 py-2.5 text-[13px] font-medium rounded-md hidden">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                Open page
+                            </a>
+                        </div>
+                        <p id="detail-download-hint" class="text-[11px] text-muted mt-2 hidden"></p>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="border-b border-tk mb-6">
+                    <div class="flex gap-1">
+                        <button class="detail-tab active" data-tab="about">About</button>
+                        <button class="detail-tab" data-tab="screenshots">Screenshots</button>
+                        <button class="detail-tab" data-tab="info">Information</button>
+                        <button class="detail-tab" data-tab="reviews">Reviews</button>
+                    </div>
+                </div>
+
+                <!-- Tab: About -->
+                <div class="detail-tab-panel active" data-panel="about">
+                    <div class="mb-8">
+                        <h2 class="text-[15px] font-semibold tracking-tight mb-3">About this app</h2>
+                        <div id="detail-description" class="prose-app text-[14px] text-soft leading-relaxed"></div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-baseline justify-between mb-4">
+                            <h2 class="text-[15px] font-semibold tracking-tight">More from <span id="detail-more-cat" class="text-muted">this category</span></h2>
+                            <a href="#/" class="text-[12px] text-accent hover:underline" id="detail-more-link">View all</a>
+                        </div>
+                        <div id="detail-related" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+                    </div>
+                </div>
+
+                <!-- Tab: Screenshots -->
+                <div class="detail-tab-panel" data-panel="screenshots">
+                    <div id="detail-gallery-section">
+                        <div class="gallery-main mb-2">
+                            <img id="gallery-main-img" src="" alt="" loading="lazy" />
+                        </div>
+                        <div class="gallery-thumbs" id="gallery-thumbs"></div>
+                    </div>
+                    <p id="gallery-empty" class="text-[13px] text-muted text-center py-12 hidden">No screenshots available for this app.</p>
+                </div>
+
+                <!-- Tab: Information -->
+                <div class="detail-tab-panel" data-panel="info">
+                    <div class="border border-tk rounded-md p-4 surface">
+                        <h3 class="text-[13px] font-semibold mb-3">App information</h3>
+                        <div class="spec-row"><span class="spec-key">Version</span><span class="spec-val" id="detail-spec-version">-</span></div>
+                        <div class="spec-row"><span class="spec-key">Size</span><span class="spec-val" id="detail-spec-size">-</span></div>
+                        <div class="spec-row"><span class="spec-key">Category</span><span class="spec-val" id="detail-spec-category">-</span></div>
+                        <div class="spec-row"><span class="spec-key">Added</span><span class="spec-val" id="detail-spec-added">-</span></div>
+                        <div class="spec-row"><span class="spec-key">Source</span><span class="spec-val" id="detail-spec-source">-</span></div>
+                        <div class="spec-row"><span class="spec-key">Downloads</span><span class="spec-val" id="detail-spec-downloads">-</span></div>
+                        <div class="spec-row" id="detail-spec-rating-row"><span class="spec-key">Rating</span><span class="spec-val" id="detail-spec-rating">-</span></div>
+                        <div class="spec-row"><span class="spec-key">Download type</span><span class="spec-val" id="detail-spec-type">-</span></div>
+                    </div>
+                </div>
+
+                <!-- Tab: Reviews -->
+                <div class="detail-tab-panel" data-panel="reviews">
+                    <div class="mb-6">
+                        <div class="flex items-baseline justify-between mb-4">
+                            <h2 class="text-[15px] font-semibold tracking-tight">User reviews</h2>
+                            <button id="write-review-btn" class="btn-primary inline-flex items-center gap-2 px-4 py-2 text-[13px] font-medium rounded-md">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                Write a review
+                            </button>
+                        </div>
+                        <div id="reviews-list" class="space-y-2">
+                            <p class="text-[13px] text-muted text-center py-8">Loading reviews...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ad-slot ad-leaderboard my-6" id="ad-detail-2"></div>
+            </div>
+
+            <aside>
+                <div class="sidebar-sticky space-y-4">
+                    <div class="border border-tk rounded-md p-4 surface">
+                        <h3 class="text-[13px] font-semibold mb-3">Quick download</h3>
+                        <p class="text-[12px] text-muted mb-3" id="sidebar-source">Source: mediafire.com</p>
+                        <button id="sidebar-download-btn" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[13px] font-medium rounded-md">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span id="sidebar-download-label">Download</span>
+                        </button>
+                        <p class="text-[11px] text-muted mt-2 text-center" id="sidebar-download-hint"></p>
+                    </div>
+
+                    <!-- Adsterra Smart Link (sponsored) -->
+                    <a href="https://www.effectivecpmnetwork.com/ra6xi03fz?key=994059590588c05251466493ea0d3d0e"
+                       target="_blank" rel="noopener noreferrer sponsored"
+                       class="block border border-tk rounded-md p-4 surface hover:border-tk-strong transition-colors no-underline"
+                       style="color: inherit;">
+                        <div class="flex items-center gap-2 mb-1">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            <h3 class="text-[13px] font-semibold">Sponsored offer</h3>
+                        </div>
+                        <p class="text-[11px] text-muted mb-2">Check out this featured recommendation</p>
+                        <span class="inline-flex items-center gap-1 text-[12px] font-medium" style="color: var(--accent);">
+                            View offer
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                        </span>
+                    </a>
+
+                    <div class="ad-slot ad-rect" id="ad-detail-3"></div>
+                </div>
+            </aside>
+        </div>
+
+        <div id="detail-loading" class="hidden">
+            <div class="grid lg:grid-cols-[1fr_320px] gap-8">
+                <div>
+                    <div class="flex items-start gap-5 mb-6 pb-6 border-b border-tk">
+                        <div class="skeleton w-24 h-24 rounded-2xl"></div>
+                        <div class="flex-1 space-y-3">
+                            <div class="skeleton h-7 w-3/4"></div>
+                            <div class="skeleton h-3 w-20"></div>
+                            <div class="skeleton h-3 w-40"></div>
+                            <div class="flex gap-2 mt-3">
+                                <div class="skeleton h-10 w-32 rounded-md"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skeleton h-4 w-full mb-3"></div>
+                    <div class="skeleton h-4 w-full mb-3"></div>
+                    <div class="skeleton h-4 w-5/6 mb-3"></div>
+                </div>
+                <div>
+                    <div class="skeleton h-32 w-full rounded-md mb-4"></div>
+                    <div class="skeleton h-60 w-full rounded-md"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="detail-404" class="hidden text-center py-20">
+            <p class="text-[16px] font-semibold mb-1">App not found</p>
+            <p class="text-[13px] text-muted mb-6">This app may have been removed or the link is incorrect.</p>
+            <a href="#/" class="btn-secondary inline-flex items-center gap-2 px-4 py-2 text-[13px] font-medium rounded-md">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+                Back to catalog
+            </a>
+        </div>
+    </main>
+
+    <!-- ========================================================
+         VIEW: CATEGORY INDEX
+         ======================================================== -->
+    <main id="view-category" class="max-w-[1400px] mx-auto px-5 py-6">
+        <nav class="text-[12px] mb-6 flex items-center gap-1.5" aria-label="Breadcrumb">
+            <a href="#/" class="crumb">Catalog</a>
+            <span class="text-muted">/</span>
+            <span class="text-soft">Category</span>
+        </nav>
+
+        <div class="mb-6">
+            <p class="text-[11px] text-muted mb-1">Category</p>
+            <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-1" id="cat-title">Category name</h1>
+            <p class="text-[13px] text-muted" id="cat-meta">0 apps</p>
+        </div>
+
+        <div class="ad-slot ad-leaderboard mb-6" id="ad-cat-1"></div>
+
+        <div class="grid lg:grid-cols-[1fr_280px] gap-8">
+            <div>
+                <div class="flex items-baseline justify-between mb-4">
+                    <h2 class="text-[15px] font-semibold tracking-tight">All apps in this category</h2>
+                    <div class="flex items-center gap-2">
+                        <label for="cat-sort-select" class="text-[11px] text-muted">Sort</label>
+                        <select id="cat-sort-select" class="input py-1 text-[12px]">
+                            <option value="title">Name A to Z</option>
+                            <option value="downloads">Most downloaded</option>
+                            <option value="rating">Top rated</option>
+                            <option value="created">Newest first</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="cat-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"></div>
+            </div>
+            <aside>
+                <div class="sidebar-sticky space-y-4">
+                    <div class="border border-tk rounded-md p-4 surface">
+                        <h3 class="text-[13px] font-semibold mb-3">Other categories</h3>
+                        <div id="cat-others" class="space-y-1"></div>
+                    </div>
+                    <div class="ad-slot ad-rect" id="ad-cat-2"></div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- ========================================================
+         VIEW: REQUESTS
+         ======================================================== -->
+    <main id="view-requests" class="max-w-[1400px] mx-auto px-5 py-6">
+        <nav class="text-[12px] mb-6 flex items-center gap-1.5" aria-label="Breadcrumb">
+            <a href="#/" class="crumb">Catalog</a>
+            <span class="text-muted">/</span>
+            <span class="text-soft">Requests</span>
+        </nav>
+
+        <div class="mb-8">
+            <p class="text-[11px] text-muted mb-1">Community</p>
+            <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">Software requests</h1>
+            <p class="text-[13px] text-muted max-w-2xl">Cannot find the software you need? Submit a request below. Our team reviews every submission and adds approved apps to the catalog. Browse what others have requested too.</p>
+        </div>
+
+        <div class="ad-slot ad-leaderboard mb-8" id="ad-req-1"></div>
+
+        <div class="grid lg:grid-cols-[1fr_380px] gap-8">
+            <!-- Requests list -->
+            <div>
+                <div class="flex items-baseline justify-between mb-4">
+                    <h2 class="text-[15px] font-semibold tracking-tight">All requests <span id="requests-count" class="text-muted font-normal stat-num ml-1"></span></h2>
+                </div>
+                <div id="requests-list" class="space-y-2">
+                    <p class="text-[13px] text-muted text-center py-8">Loading requests...</p>
+                </div>
+            </div>
+
+            <!-- Submit form -->
+            <aside>
+                <div class="sidebar-sticky">
+                    <div class="border border-tk rounded-md p-5 surface">
+                        <h3 class="text-[14px] font-semibold mb-4">Submit a new request</h3>
+                        <div id="request-form-success" class="form-success hidden"></div>
+                        <form id="request-form" class="space-y-0">
+                            <div class="form-field">
+                                <label for="req-name">Your name</label>
+                                <input type="text" id="req-name" name="name" placeholder="John Doe" required maxlength="100" />
+                            </div>
+                            <div class="form-field">
+                                <label for="req-software">Software name</label>
+                                <input type="text" id="req-software" name="software" placeholder="e.g., Notepad++" required maxlength="200" />
+                            </div>
+                            <div class="form-field">
+                                <label for="req-category">Category (optional)</label>
+                                <select id="req-category" name="category">
+                                    <option value="">Select category</option>
+                                    <option value="Development">Development</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Multimedia">Multimedia</option>
+                                    <option value="Productivity">Productivity</option>
+                                    <option value="Utilities">Utilities</option>
+                                    <option value="Games">Games</option>
+                                    <option value="Security">Security</option>
+                                    <option value="Internet">Internet</option>
+                                    <option value="Office">Office</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Android Apps">Android Apps</option>
+                                    <option value="Windows Software">Windows Software</option>
+                                    <option value="Browser">Browser</option>
+                                    <option value="GitHub Apps">GitHub Apps</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="req-url">Download link (optional)</label>
+                                <input type="url" id="req-url" name="url" placeholder="https://..." maxlength="500" />
+                            </div>
+                            <div class="form-field">
+                                <label for="req-desc">Description (optional)</label>
+                                <textarea id="req-desc" name="description" placeholder="Tell us why this software should be added..." maxlength="500"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[13px] font-medium rounded-md">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                                Submit request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="border-t border-tk mt-12" style="background: var(--surface);">
+        <div class="max-w-[1400px] mx-auto px-5 py-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="md:col-span-2">
+                <div class="font-semibold text-[15px] mb-2 flex items-center gap-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    Dev<span style="color: var(--accent);">Fetch</span>
+                </div>
+                <p class="text-[12px] text-muted max-w-md">Curated software catalog for developers. Fetch dev tools, SDKs, and utilities from trusted mirrors.</p>
+                <div class="mt-3 flex gap-2">
+                    <a href="#/requests" class="request-btn">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                        Request app
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-[12px] font-semibold mb-2">Browse</h4>
+                <ul class="text-[12px] text-muted space-y-1">
+                    <li><a href="#/" class="hover:text-accent">All apps</a></li>
+                    <li><a href="#/" class="hover:text-accent">Top charts</a></li>
+                    <li><a href="#/" class="hover:text-accent">Recently added</a></li>
+                    <li><a href="#/requests" class="hover:text-accent">Request software</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-[12px] font-semibold mb-2">Contact</h4>
+                <ul class="text-[12px] text-muted space-y-1">
+                    <li>
+                        <a href="mailto:ziadev20@gmail.com" class="hover:text-accent inline-flex items-center gap-1.5">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            ziadev20@gmail.com
+                        </a>
+                    </li>
+                    <li class="pt-2">
+                        <p class="text-[11px] text-muted">Founded and developed by</p>
+                        <p class="text-[12px] font-semibold text-soft mt-0.5">Muhammad Zia Ul Haq</p>
+                        <p class="text-[11px] text-muted">Team Zia.dev</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-tk">
+            <div class="max-w-[1400px] mx-auto px-5 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-muted">
+                <div class="flex items-center gap-2">
+                    <span class="stat-num" id="footer-total"></span> apps indexed
+                </div>
+                <div class="text-center">
+                    Built with care by <span class="font-semibold text-soft">Muhammad Zia Ul Haq</span> and the <span class="font-semibold text-soft">Zia.dev</span> team
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== Review Modal ===== -->
+    <div id="review-modal" class="modal-overlay hidden">
+        <div class="modal-box relative">
+            <button class="modal-close" onclick="closeReviewModal()" aria-label="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <h3 class="text-[16px] font-semibold mb-1">Write a review</h3>
+            <p class="text-[12px] text-muted mb-5">Share your experience with this app.</p>
+            <div id="review-form-success" class="form-success hidden"></div>
+            <form id="review-form">
+                <div class="form-field">
+                    <label for="reviewer-name">Your name</label>
+                    <input type="text" id="reviewer-name" name="name" placeholder="John Doe" required maxlength="100" />
+                </div>
+                <div class="form-field">
+                    <label>Rating</label>
+                    <div class="star-input" id="star-input">
+                        <span class="star-btn" data-val="1">&#9733;</span>
+                        <span class="star-btn" data-val="2">&#9733;</span>
+                        <span class="star-btn" data-val="3">&#9733;</span>
+                        <span class="star-btn" data-val="4">&#9733;</span>
+                        <span class="star-btn" data-val="5">&#9733;</span>
+                    </div>
+                    <input type="hidden" id="review-rating" name="rating" value="0" required />
+                </div>
+                <div class="form-field">
+                    <label for="review-text">Your review</label>
+                    <textarea id="review-text" name="text" placeholder="Tell others what you think about this app..." required maxlength="500"></textarea>
+                </div>
+                <button type="submit" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[13px] font-medium rounded-md">
+                    Submit review
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== APP LOGIC ===== -->
+    <script>
+    /* ===== Config ===== */
+    const SUPABASE_URL = "https://ttokitwfthjrqzfabfwx.supabase.co";
+    const POSTGREST = SUPABASE_URL + "/rest/v1";
+    const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0b2tpdHdmdGhqcnF6ZmFiZnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM1MTY5MDEsImV4cCI6MjA5OTA5MjkwMX0.TnF97qFxfZu17nZl7dqTK0jT0SBjIRwBBMg0dhQS5JU";
+    const HEADERS = {
+        'apikey': ANON_KEY,
+        'Authorization': 'Bearer ' + ANON_KEY,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    };
+
+    /* ===== MediaFire proxy URL =====
+     * Set this to your deployed Cloudflare Worker URL to enable
+     * auto-download for MediaFire links. Leave empty to fall back
+     * to opening the MediaFire page in a new tab.
+     *
+     * Example: "https://mediafire-proxy.your-name.workers.dev"
+     */
+    const MEDIAFIRE_PROXY_URL = "";
+
+    let allApps = [];
+    let heroSlides = [];
+    let heroIndex = 0;
+    let heroTimer = null;
+    let currentSort = 'title';
+    let currentCatSort = 'title';
+    let currentView = 'loading';
+    let currentDetailApp = null;
+
+    const $ = id => document.getElementById(id);
+    const loading = $('loading');
+    const catalog = $('catalog');
+    const errorBanner = $('error-banner');
+    const errorMessage = $('error-message');
+    const errorDetail = $('error-detail');
+    const searchBar = $('search-bar');
+    const resultCount = $('result-count');
+    const heroTrack = $('hero-track');
+    const heroDots = $('hero-dots');
+    const topCharts = $('top-charts');
+    const catTabBar = $('cat-tab-bar');
+    const appsGrid = $('apps-grid');
+    const appsCount = $('apps-count');
+    const sortSelect = $('sort-select');
+    const catSortSelect = $('cat-sort-select');
+    const spotlight = $('spotlight');
+    const recentList = $('recent-list');
+    const searchResults = $('search-results');
+    const searchGrid = $('search-grid');
+    const searchCount = $('search-count');
+    const clearSearchBtn = $('clear-search');
+    const footerTotal = $('footer-total');
+
+    /* ===== Theme ===== */
+    function initTheme() {
+        const saved = localStorage.getItem('sh-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(saved ? saved === 'dark' : prefersDark);
+    }
+    function applyTheme(isDark) {
+        document.documentElement.classList.toggle('dark', isDark);
+        localStorage.setItem('sh-theme', isDark ? 'dark' : 'light');
+    }
+    $('theme-toggle').addEventListener('click', () => applyTheme(!document.documentElement.classList.contains('dark')));
+    initTheme();
+
+    /* ===== View switcher ===== */
+    function setView(view) {
+        currentView = view;
+        document.body.classList.remove('view-home', 'view-detail', 'view-category', 'view-requests', 'view-loading');
+        document.body.classList.add('view-' + view);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    /* ===== Router ===== */
+    function handleRoute() {
+        const hash = window.location.hash || '#/';
+        if (hash.startsWith('#/app/')) {
+            const id = decodeURIComponent(hash.replace('#/app/', ''));
+            showDetailPage(id);
+        } else if (hash.startsWith('#/category/')) {
+            const name = decodeURIComponent(hash.replace('#/category/', ''));
+            showCategoryPage(name);
+        } else if (hash.startsWith('#/requests')) {
+            showRequestsPage();
+        } else {
+            if (allApps.length === 0) {
+                fetchApps().then(() => showHomePage());
+            } else {
+                showHomePage();
+            }
+        }
+    }
+    window.addEventListener('hashchange', handleRoute);
+
+    function showHomePage() {
+        setView('home');
+        if (!searchBar.value.trim()) {
+            searchResults.style.display = 'none';
+            catalog.style.display = '';
+        }
+        document.title = 'DevFetch - Catalog';
+        setMetaDescription('DevFetch - curated software catalog with direct download mirrors.');
+        updateCatTabActive('');
+    }
+
+    function showCategoryPage(name) {
+        setView('category');
+        const ready = () => {
+            const items = allApps.filter(a => (a.category || 'Uncategorized') === name);
+            $('cat-title').textContent = name;
+            $('cat-meta').textContent = `${items.length} app${items.length === 1 ? '' : 's'} in this category`;
+            document.title = `${name} - DevFetch`;
+            setMetaDescription(`Browse ${items.length} ${name} apps on DevFetch.`);
+            renderCategoryGrid(items);
+            renderOtherCategories(name);
+            updateCatTabActive(name);
+        };
+        if (allApps.length === 0) fetchApps().then(ready);
+        else ready();
+    }
+
+    function renderCategoryGrid(items) {
+        const sorted = sortApps(items, currentCatSort);
+        const grid = $('cat-grid');
+        if (!sorted.length) {
+            grid.innerHTML = `<div class="col-span-full py-12 text-center text-muted text-[13px]">No apps in this category yet.</div>`;
+            return;
+        }
+        grid.innerHTML = sorted.map(cardHTML).join('');
+    }
+
+    function renderOtherCategories(currentName) {
+        const groups = {};
+        allApps.forEach(a => {
+            const c = a.category || 'Uncategorized';
+            if (c === currentName) return;
+            groups[c] = (groups[c] || 0) + 1;
+        });
+        const cats = Object.keys(groups).sort();
+        $('cat-others').innerHTML = cats.length
+            ? cats.map(c => `
+                <a href="#/category/${encodeURIComponent(c)}" class="block py-1.5 text-[12px] hover:text-accent transition-colors flex justify-between items-center">
+                    <span class="clamp-1">${esc(c)}</span>
+                    <span class="text-muted stat-num ml-2">${groups[c]}</span>
+                </a>
+            `).join('')
+            : `<p class="text-[12px] text-muted">No other categories.</p>`;
+    }
+
+    catSortSelect.addEventListener('change', e => {
+        currentCatSort = e.target.value;
+        const name = $('cat-title').textContent;
+        const items = allApps.filter(a => (a.category || 'Uncategorized') === name);
+        renderCategoryGrid(items);
+    });
+
+    async function showDetailPage(id) {
+        setView('detail');
+        $('detail-loading').classList.remove('hidden');
+        $('detail-content').classList.add('hidden');
+        $('detail-404').classList.add('hidden');
+
+        if (allApps.length === 0) await fetchApps();
+
+        const app = allApps.find(a => String(a.id) === String(id));
+        $('detail-loading').classList.add('hidden');
+
+        if (!app) {
+            $('detail-404').classList.remove('hidden');
+            document.title = 'App not found - DevFetch';
+            return;
+        }
+
+        currentDetailApp = app;
+        renderDetailPage(app);
+        $('detail-content').classList.remove('hidden');
+    }
+
+    function renderDetailPage(app) {
+        $('detail-bc-cat').textContent = app.category || 'Uncategorized';
+        $('detail-bc-cat').href = '#/category/' + encodeURIComponent(app.category || 'Uncategorized');
+        $('detail-bc-title').textContent = app.title || 'App';
+
+        const icon = app.icon && app.icon.trim() ? app.icon : 'https://placehold.co/200';
+        $('detail-icon').src = icon;
+        $('detail-category').textContent = app.category || 'Uncategorized';
+        $('detail-title').textContent = app.title || 'Untitled app';
+        $('detail-meta').textContent = `v${app.version || 'n/a'} / ${app.size || 'n/a'}`;
+
+        const rating = parseFloat(app.rating) || 0;
+        const ratingCount = parseInt(app.rating_count) || 0;
+        const ratingRow = $('detail-rating-row');
+        if (rating > 0) {
+            ratingRow.classList.remove('hidden');
+            ratingRow.classList.add('flex');
+            $('detail-stars').innerHTML = starsHTML(rating);
+            $('detail-rating-num').textContent = rating.toFixed(1);
+            $('detail-rating-count').textContent = ratingCount > 0 ? `(${formatNum(ratingCount)})` : '';
+        } else {
+            ratingRow.classList.add('hidden');
+            ratingRow.classList.remove('flex');
+        }
+
+        const dl = parseInt(app.downloads) || 0;
+        $('detail-downloads-num').textContent = formatNum(dl);
+
+        // Download button
+        const url = app.download_url || '#';
+        const urlLower = url.toLowerCase();
+        const isMediafire = urlLower.includes('mediafire.com');
+        const isGdrive = urlLower.includes('drive.google.com');
+        const isMirror = isMediafire || isGdrive;
+        const canAutoDownload = isGdrive || (isMediafire && MEDIAFIRE_PROXY_URL);
+
+        const dlBtn = $('detail-download-primary');
+        $('detail-download-label').textContent = isMirror ? 'Download' : 'Download';
+        dlBtn.onclick = (e) => {
+            e.preventDefault();
+            triggerDownload(url, app.id);
+        };
+
+        // Show "Open page" link for MediaFire without proxy (user needs to visit the page)
+        const visitLink = $('detail-visit-link');
+        const hintEl = $('detail-download-hint');
+        if (isMediafire && !MEDIAFIRE_PROXY_URL) {
+            visitLink.href = url;
+            visitLink.classList.remove('hidden');
+            hintEl.textContent = 'Opens MediaFire page in new tab. Click Download there.';
+            hintEl.classList.remove('hidden');
+        } else if (isGdrive) {
+            visitLink.href = url;
+            visitLink.classList.remove('hidden');
+            hintEl.textContent = 'Auto-download starts. If it does not, use Open page.';
+            hintEl.classList.remove('hidden');
+        } else if (canAutoDownload) {
+            hintEl.textContent = 'Download starts automatically.';
+            hintEl.classList.remove('hidden');
+            visitLink.classList.add('hidden');
+        } else {
+            visitLink.href = url;
+            visitLink.classList.remove('hidden');
+            hintEl.classList.add('hidden');
+        }
+
+        // Description
+        const desc = (app.description || 'No description available.').trim();
+        const paragraphs = desc.split(/\n\n+/).filter(p => p.trim());
+        $('detail-description').innerHTML = paragraphs.length
+            ? paragraphs.map(p => `<p>${esc(p)}</p>`).join('')
+            : `<p>${esc(desc)}</p>`;
+
+        // Specs
+        $('detail-spec-version').textContent = app.version || 'n/a';
+        $('detail-spec-size').textContent = app.size || 'n/a';
+        $('detail-spec-category').textContent = app.category || 'Uncategorized';
+        $('detail-spec-added').textContent = app.created_at ? formatDate(app.created_at) : 'n/a';
+        $('detail-spec-source').textContent = hostnameOf(url) || 'n/a';
+        $('detail-spec-downloads').textContent = formatNum(dl);
+        $('detail-spec-type').textContent = isMediafire ? 'MediaFire mirror' : isGdrive ? 'Google Drive mirror' : 'Direct link';
+
+        const ratingSpecRow = $('detail-spec-rating-row');
+        if (rating > 0) {
+            ratingSpecRow.style.display = '';
+            $('detail-spec-rating').textContent = `${rating.toFixed(1)}${ratingCount > 0 ? ` (${formatNum(ratingCount)} ratings)` : ''}`;
+        } else {
+            ratingSpecRow.style.display = 'none';
+        }
+
+        // Sidebar download button
+        $('sidebar-source').textContent = `Source: ${hostnameOf(url) || 'unknown'}`;
+        $('sidebar-download-label').textContent = isMirror ? 'Download mirror' : 'Download';
+        $('sidebar-download-btn').onclick = () => triggerDownload(url, app.id);
+        const sidebarHint = $('sidebar-download-hint');
+        if (isMediafire && !MEDIAFIRE_PROXY_URL) {
+            sidebarHint.textContent = 'Opens MediaFire page';
+        } else if (canAutoDownload) {
+            sidebarHint.textContent = 'Auto-download enabled';
+        } else {
+            sidebarHint.textContent = 'Opens in new tab';
+        }
+
+        // Screenshots
+        renderGallery(app);
+
+        // Related
+        const related = allApps
+            .filter(a => String(a.id) !== String(app.id) && (a.category || 'Uncategorized') === (app.category || 'Uncategorized'))
+            .slice(0, 8);
+        $('detail-more-cat').textContent = app.category || 'this category';
+        $('detail-more-link').href = '#/category/' + encodeURIComponent(app.category || 'Uncategorized');
+        if (related.length) {
+            $('detail-related').innerHTML = related.map(cardHTML).join('');
+        } else {
+            $('detail-related').innerHTML = `<p class="text-[12px] text-muted col-span-full">No other apps in this category yet.</p>`;
+        }
+
+        // Reset to About tab
+        switchDetailTab('about');
+
+        // Load reviews for this app
+        fetchReviews(app.id).then(reviews => renderReviews(reviews));
+
+        document.title = `${app.title || 'App'} - DevFetch`;
+        setMetaDescription(`${app.title || 'Software'} - ${app.category || 'app'}. ${(app.description || '').slice(0, 140)}`);
+    }
+
+    /* ===== Detail tabs ===== */
+    document.querySelectorAll('.detail-tab').forEach(tab => {
+        tab.addEventListener('click', () => switchDetailTab(tab.dataset.tab));
+    });
+    function switchDetailTab(name) {
+        document.querySelectorAll('.detail-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+        document.querySelectorAll('.detail-tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === name));
+    }
+
+    /* ===== Auto-download logic ===== */
+    function getDirectDownloadUrl(url) {
+        if (!url) return '#';
+        const lower = url.toLowerCase();
+
+        // Google Drive: transform to direct download URL
+        if (lower.includes('drive.google.com')) {
+            const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+            if (fileIdMatch) {
+                return `https://drive.google.com/uc?export=download&id=${fileIdMatch[1]}`;
+            }
+        }
+
+        // MediaFire: use proxy if configured
+        if (lower.includes('mediafire.com') && MEDIAFIRE_PROXY_URL) {
+            return MEDIAFIRE_PROXY_URL + '?url=' + encodeURIComponent(url);
+        }
+
+        return url;
+    }
+
+    function triggerDownload(originalUrl, appId) {
+        if (!originalUrl || originalUrl === '#') return;
+
+        const directUrl = getDirectDownloadUrl(originalUrl);
+        const urlLower = originalUrl.toLowerCase();
+        const isMediafire = urlLower.includes('mediafire.com');
+        const isGdrive = urlLower.includes('drive.google.com');
+        const canAuto = isGdrive || (isMediafire && MEDIAFIRE_PROXY_URL);
+
+        // Increment download counter
+        incrementDownloads(appId);
+
+        if (canAuto) {
+            // Use hidden iframe to trigger download without navigating away
+            showToast('Download starting...', directUrl);
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = directUrl;
+            document.body.appendChild(iframe);
+            setTimeout(() => {
+                if (iframe.parentNode) document.body.removeChild(iframe);
+            }, 60000);
+        } else {
+            // Open in new tab
+            window.open(originalUrl, '_blank', 'noopener,noreferrer');
+            showToast('Opened download page in new tab', originalUrl);
+        }
+    }
+
+    /* ===== Toast ===== */
+    function showToast(message, fallbackUrl) {
+        // Remove existing toast
+        const existing = document.querySelector('.toast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `
+            <span>${esc(message)}</span>
+            ${fallbackUrl ? `<a href="${esc(fallbackUrl)}" target="_blank" rel="noopener noreferrer" class="toast-link">Open manually</a>` : ''}
+        `;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('toast-fade');
+            setTimeout(() => {
+                if (toast.parentNode) toast.remove();
+            }, 300);
+        }, 8000);
+    }
+
+    /* ===== Stars ===== */
+    function starsHTML(rating) {
+        let html = '';
+        for (let i = 1; i <= 5; i++) {
+            let cls = 'star';
+            if (rating >= i) cls += ' filled';
+            else if (rating >= i - 0.5) cls += ' half';
+            html += `<svg class="${cls}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+        }
+        return html;
+    }
+
+    function formatNum(n) {
+        if (n == null) return '0';
+        if (n < 1000) return String(n);
+        if (n < 1000000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+        return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    }
+
+    /* ===== Gallery =====
+       Supports 3 input formats for the `screenshots` field:
+       1. Folder path (NEW): "screenshots/vscode" or "screenshots/vscode/"
+          -> Calls Supabase Storage API to list all files in that folder
+          -> Automatically loads every image found
+       2. JSON array (legacy): '["url1","url2"]'
+          -> Parses and displays each URL
+       3. Comma-separated URLs: "url1,url2,url3"
+          -> Splits and displays each
+    */
+    async function renderGallery(app) {
+        const section = $('detail-gallery-section');
+        const empty = $('gallery-empty');
+        let shots = [];
+
+        const raw = app.screenshots;
+        if (raw == null || (typeof raw === 'string' && !raw.trim())) {
+            section.style.display = 'none';
+            empty.classList.remove('hidden');
+            return;
+        }
+
+        // Convert to string if it's an array (legacy jsonb data)
+        const value = Array.isArray(raw) ? JSON.stringify(raw) : String(raw).trim();
+
+        // Detect format
+        if (value.startsWith('[')) {
+            // JSON array format
+            try {
+                const parsed = JSON.parse(value);
+                if (Array.isArray(parsed)) {
+                    shots = parsed.filter(s => s && String(s).trim()).map(s => String(s).trim());
+                }
+            } catch (e) {
+                shots = [];
+            }
+        } else if (value.startsWith('http://') || value.startsWith('https://')) {
+            // Single URL or comma-separated URLs
+            if (value.includes(',')) {
+                shots = value.split(',').map(s => s.trim()).filter(s => s);
+            } else {
+                shots = [value];
+            }
+        } else {
+            // Folder path format (e.g., "screenshots/vscode")
+            // Call Supabase Storage API to list files in the folder
+            const folderPath = value.replace(/^\/+|\/+$/g, ''); // trim slashes
+            try {
+                const listUrl = SUPABASE_URL + '/storage/v1/object/list/softwarehub';
+                const response = await fetch(listUrl, {
+                    method: 'POST',
+                    headers: HEADERS,
+                    body: JSON.stringify({
+                        prefix: folderPath + '/',
+                        limit: 100,
+                        offset: 0,
+                        sortBy: { column: 'name', order: 'asc' }
+                    })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (Array.isArray(data)) {
+                        // Filter to image files only and build public URLs
+                        const imageExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp', '.svg'];
+                        shots = data
+                            .filter(item => item.name && imageExtensions.some(ext =>
+                                item.name.toLowerCase().endsWith(ext)))
+                            .map(item =>
+                                SUPABASE_URL + '/storage/v1/object/public/softwarehub/' +
+                                folderPath + '/' + encodeURIComponent(item.name)
+                            );
+                    }
+                } else {
+                    console.warn('[DevFetch] Storage API error:', response.status);
+                }
+            } catch (e) {
+                console.warn('[DevFetch] Could not list folder:', e);
+            }
+        }
+
+        if (!shots.length) {
+            section.style.display = 'none';
+            empty.classList.remove('hidden');
+            return;
+        }
+
+        section.style.display = '';
+        empty.classList.add('hidden');
+        $('gallery-main-img').src = shots[0];
+        $('gallery-main-img').alt = `${app.title || 'App'} screenshot 1`;
+        $('gallery-thumbs').innerHTML = shots.map((s, i) => `
+            <div class="gallery-thumb ${i === 0 ? 'active' : ''}" data-src="${esc(s)}" data-i="${i}">
+                <img src="${esc(s)}" alt="${esc(app.title || 'App')} screenshot ${i + 1}" loading="lazy" />
+            </div>
+        `).join('');
+        $('gallery-thumbs').querySelectorAll('.gallery-thumb').forEach(t => {
+            t.addEventListener('click', () => {
+                $('gallery-main-img').src = t.dataset.src;
+                $('gallery-thumbs').querySelectorAll('.gallery-thumb').forEach(x => x.classList.remove('active'));
+                t.classList.add('active');
+            });
+        });
+    }
+
+    /* ===== Increment downloads ===== */
+    function incrementDownloads(appId) {
+        if (!appId) return;
+        fetch(POSTGREST + '/rpc/increment_downloads', {
+            method: 'POST',
+            headers: HEADERS,
+            body: JSON.stringify({ app_id: appId }),
+        }).catch(err => console.warn('[DevFetch] download increment failed:', err));
+
+        const app = allApps.find(a => String(a.id) === String(appId));
+        if (app) {
+            app.downloads = (parseInt(app.downloads) || 0) + 1;
+            const dlEl = $('detail-downloads-num');
+            const specEl = $('detail-spec-downloads');
+            if (dlEl) dlEl.textContent = formatNum(app.downloads);
+            if (specEl) specEl.textContent = formatNum(app.downloads);
+        }
+    }
+
+    function setMetaDescription(text) {
+        let meta = document.querySelector('meta[name="description"]');
+        if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('name', 'description');
+            document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', text);
+    }
+
+    function formatDate(iso) {
+        try {
+            const d = new Date(iso);
+            return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        } catch (e) { return iso || 'n/a'; }
+    }
+    function hostnameOf(url) {
+        try { return new URL(url).hostname.replace(/^www\./, ''); }
+        catch (e) { return ''; }
+    }
+
+    /* ===== Fetch ===== */
+    async function fetchApps() {
+        try {
+            const url = POSTGREST + '/softwares?select=*';
+            const res = await fetch(url, { headers: HEADERS });
+            if (!res.ok) {
+                const t = await res.text();
+                throw new Error(`HTTP ${res.status}: ${t.slice(0, 200)}`);
+            }
+            const data = await res.json();
+            allApps = Array.isArray(data) ? data : [];
+
+            // ===== Normalize category names =====
+            // Prevents duplicate categories caused by:
+            //   - Leading/trailing whitespace ("Utilities " vs "Utilities")
+            //   - Case differences ("utilities" vs "Utilities")
+            //   - Hidden characters (newlines, tabs)
+            //   - Empty/null categories (fallback to "Uncategorized")
+            // Also normalizes other string fields for consistency.
+            allApps.forEach(app => {
+                if (app.category != null) {
+                    app.category = String(app.category)
+                        .trim()
+                        .replace(/\s+/g, ' ')        // collapse multiple spaces
+                        .replace(/^./, c => c.toUpperCase()); // capitalize first letter
+                    if (app.category === '') app.category = 'Uncategorized';
+                } else {
+                    app.category = 'Uncategorized';
+                }
+                if (app.title != null) {
+                    app.title = String(app.title).trim().replace(/\s+/g, ' ');
+                }
+                if (app.version != null) {
+                    app.version = String(app.version).trim();
+                }
+                if (app.size != null) {
+                    app.size = String(app.size).trim();
+                }
+            });
+        } catch (e) {
+            console.error(e);
+            if (currentView === 'home' || currentView === 'loading') {
+                loading.classList.add('hidden');
+                errorMessage.textContent = 'Could not load catalog.';
+                errorDetail.textContent = e.message;
+                errorBanner.classList.remove('hidden');
+            }
+            return;
+        }
+
+        if (currentView === 'home' || currentView === 'loading') {
+            loading.classList.add('hidden');
+            catalog.classList.remove('hidden');
+            catTabBar.classList.remove('hidden');
+        }
+
+        // Sort newest first: primary by created_at desc, secondary by id desc
+        // (id is always sequential, so the most recently inserted app wins ties)
+        heroSlides = [...allApps].sort((a,b) => {
+            const tA = new Date(a.created_at || 0).getTime();
+            const tB = new Date(b.created_at || 0).getTime();
+            if (tB !== tA) return tB - tA;           // newer timestamp first
+            return (b.id || 0) - (a.id || 0);         // higher id first (tiebreaker)
+        }).slice(0, 5);
+
+        renderHero();
+        renderTopCharts();
+        renderCatTabs();
+        renderApps();
+        renderSpotlight(heroSlides[0] || allApps[0]);
+        renderRecent([...allApps].sort((a,b) =>
+            new Date(b.created_at || 0) - new Date(a.created_at || 0)
+        ).slice(0, 5));
+        updateCounts();
+    }
+
+    function updateCounts() {
+        const total = allApps.length;
+        resultCount.textContent = `${total} apps`;
+        appsCount.textContent = `(${total})`;
+        footerTotal.textContent = `${total}`;
+    }
+
+    /* ===== Category tabs (sticky bar) ===== */
+    function renderCatTabs() {
+        const groups = {};
+        allApps.forEach(a => {
+            const c = a.category || 'Uncategorized';
+            groups[c] = (groups[c] || 0) + 1;
+        });
+        const cats = Object.keys(groups).sort();
+        const html = `<a href="#/" class="cat-tab active" data-cat="">All</a>` +
+            cats.map(c => `<a href="#/category/${encodeURIComponent(c)}" class="cat-tab" data-cat="${esc(c)}">${esc(c)}</a>`).join('');
+        catTabBar.querySelector('.flex').innerHTML = html;
+    }
+
+    function updateCatTabActive(catName) {
+        catTabBar.querySelectorAll('.cat-tab').forEach(t => {
+            t.classList.toggle('active', t.dataset.cat === (catName || ''));
+        });
+    }
+
+    /* ===== Hero ===== */
+    function renderHero() {
+        if (!heroSlides.length) {
+            heroTrack.innerHTML = `<div class="hero-slide p-10 text-center text-muted">No featured apps yet.</div>`;
+            return;
+        }
+        heroTrack.innerHTML = heroSlides.map(app => `
+            <div class="hero-slide">
+                <a href="#/app/${esc(app.id)}" class="block p-7 sm:p-10 flex items-center gap-6 sm:gap-8 min-h-[260px] hover:bg-surface-2 transition-colors">
+                    <img src="${esc(app.icon && app.icon.trim() ? app.icon : 'https://placehold.co/200')}"
+                         alt="" loading="lazy"
+                         onerror="this.onerror=null;this.src='https://placehold.co/200';"
+                         class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-tk object-cover flex-shrink-0" />
+                    <div class="min-w-0 flex-1">
+                        <p class="text-[11px] text-muted mb-1.5">${esc(app.category || 'Featured')}</p>
+                        <h3 class="text-xl sm:text-3xl font-semibold tracking-tight clamp-1 mb-2">${esc(app.title || '')}</h3>
+                        <p class="text-[13px] sm:text-[14px] text-soft clamp-2 max-w-xl leading-relaxed mb-3">${esc(app.description || '')}</p>
+                        <div class="flex items-center gap-4 text-[12px] text-muted mb-4 stat-num flex-wrap">
+                            <span>v${esc(app.version || 'n/a')}</span>
+                            <span class="opacity-50">/</span>
+                            <span>${esc(app.size || 'n/a')}</span>
+                            ${parseInt(app.downloads) > 0 ? `<span class="dl-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>${formatNum(parseInt(app.downloads))}</span>` : ''}
+                        </div>
+                        <span class="inline-flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-white bg-accent rounded-md">
+                            View details
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                        </span>
+                    </div>
+                </a>
+            </div>
+        `).join('');
+
+        heroDots.innerHTML = heroSlides.map((_, i) =>
+            `<span class="hero-dot ${i === 0 ? 'active' : ''}" data-i="${i}"></span>`
+        ).join('');
+        heroDots.querySelectorAll('.hero-dot').forEach(d =>
+            d.addEventListener('click', e => goHero(+e.target.dataset.i))
+        );
+        // Always start at slide 0 (the newest app) when hero re-renders
+        heroIndex = 0;
+        heroTrack.style.transform = 'translateX(0%)';
+        startHeroTimer();
+    }
+    function goHero(i) {
+        if (!heroSlides.length) return;
+        heroIndex = (i + heroSlides.length) % heroSlides.length;
+        heroTrack.style.transform = `translateX(-${heroIndex * 100}%)`;
+        heroDots.querySelectorAll('.hero-dot').forEach((d, idx) =>
+            d.classList.toggle('active', idx === heroIndex)
+        );
+    }
+    function startHeroTimer() {
+        if (heroTimer) clearInterval(heroTimer);
+        heroTimer = setInterval(() => goHero(heroIndex + 1), 7000);
+    }
+    $('hero-next').addEventListener('click', () => { goHero(heroIndex + 1); startHeroTimer(); });
+    $('hero-prev').addEventListener('click', () => { goHero(heroIndex - 1); startHeroTimer(); });
+    const heroShell = document.querySelector('.hero-shell');
+    if (heroShell) {
+        heroShell.addEventListener('mouseenter', () => heroTimer && clearInterval(heroTimer));
+        heroShell.addEventListener('mouseleave', startHeroTimer);
+    }
+
+    /* ===== Top charts ===== */
+    function renderTopCharts() {
+        const sorted = [...allApps].sort((a,b) => (parseInt(b.downloads) || 0) - (parseInt(a.downloads) || 0)).slice(0, 6);
+        if (!sorted.length) {
+            topCharts.innerHTML = `<p class="text-[12px] text-muted">No data.</p>`;
+            return;
+        }
+        topCharts.innerHTML = sorted.map((app, i) => `
+            <li>
+                <a href="#/app/${esc(app.id)}" class="flex items-center gap-3 py-2.5 border-b border-tk last:border-0 hover:bg-surface-2 -mx-2 px-2 rounded transition-colors">
+                    <span class="text-[12px] font-semibold text-muted stat-num w-5 text-right">${i + 1}</span>
+                    <img src="${esc(app.icon && app.icon.trim() ? app.icon : 'https://placehold.co/60')}"
+                         alt="" loading="lazy"
+                         onerror="this.onerror=null;this.src='https://placehold.co/60';"
+                         class="w-9 h-9 rounded-md border border-tk object-cover flex-shrink-0" />
+                    <div class="min-w-0 flex-1">
+                        <p class="text-[12px] font-medium clamp-1">${esc(app.title || '')}</p>
+                        <p class="text-[11px] text-muted clamp-1 stat-num">${esc(app.category || '')} · ${formatNum(parseInt(app.downloads) || 0)} dl</p>
+                    </div>
+                </a>
+            </li>
+        `).join('');
+    }
+
+    /* ===== Sort ===== */
+    function sortApps(apps, sort) {
+        const s = sort || currentSort;
+        const sorted = [...apps];
+        if (s === 'title') sorted.sort((a,b) => (a.title || '').localeCompare(b.title || ''));
+        else if (s === 'created') sorted.sort((a,b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+        else if (s === 'downloads') sorted.sort((a,b) => (parseInt(b.downloads) || 0) - (parseInt(a.downloads) || 0));
+        else if (s === 'rating') sorted.sort((a,b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+        return sorted;
+    }
+    function renderApps(list) {
+        const apps = sortApps(list || allApps);
+        if (!apps.length) {
+            appsGrid.innerHTML = `<div class="col-span-full py-12 text-center text-muted text-[13px]">No apps to display.</div>`;
+            return;
+        }
+        appsGrid.innerHTML = apps.map(cardHTML).join('');
+    }
+
+    /* ===== Card (APKPure-style: compact, info-dense) ===== */
+    function cardHTML(app) {
+        const icon = app.icon && app.icon.trim() ? app.icon : 'https://placehold.co/150';
+        const dl = parseInt(app.downloads) || 0;
+        const rating = parseFloat(app.rating) || 0;
+        const url = app.download_url || '#';
+        const urlLower = url.toLowerCase();
+        const isMirror = urlLower.includes('mediafire.com') || urlLower.includes('drive.google.com');
+        return `
+            <div class="app-card surface border border-tk rounded-md p-3 flex flex-col">
+                <a href="#/app/${esc(app.id)}" class="flex items-start gap-3 mb-2 no-underline" style="color: inherit;">
+                    <img src="${esc(icon)}" alt="" loading="lazy"
+                         onerror="this.onerror=null;this.src='https://placehold.co/150';"
+                         class="w-12 h-12 rounded-2xl border border-tk object-cover flex-shrink-0" />
+                    <div class="min-w-0 flex-1">
+                        <h3 class="text-[13px] font-medium clamp-1" title="${esc(app.title || '')}">${esc(app.title || '')}</h3>
+                        <p class="text-[11px] text-muted clamp-1 mt-0.5">${esc(app.category || 'Uncategorized')}</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            ${rating > 0 ? `<span class="star-row">${starsHTML(rating)}<span class="ml-1 text-[10px] text-muted stat-num">${rating.toFixed(1)}</span></span>` : ''}
+                        </div>
+                    </div>
+                </a>
+                <div class="flex items-center justify-between mt-auto pt-2">
+                    <span class="text-[10px] text-muted stat-num">${dl > 0 ? `${formatNum(dl)} dl` : (app.size || 'n/a')}</span>
+                    <button onclick="triggerDownload('${esc(url)}', ${esc(app.id)})" class="card-dl-btn">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        ${isMirror ? 'Mirror' : 'Get'}
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    sortSelect.addEventListener('change', e => {
+        currentSort = e.target.value;
+        renderApps();
+    });
+
+    /* ===== Spotlight ===== */
+    function renderSpotlight(app) {
+        if (!app) { spotlight.innerHTML = `<p class="text-[12px] text-muted">No spotlight available.</p>`; return; }
+        const icon = app.icon && app.icon.trim() ? app.icon : 'https://placehold.co/120';
+        spotlight.innerHTML = `
+            <a href="#/app/${esc(app.id)}" class="flex items-start gap-3 group no-underline" style="color: inherit;">
+                <img src="${esc(icon)}" alt="" loading="lazy"
+                     onerror="this.onerror=null;this.src='https://placehold.co/120';"
+                     class="w-14 h-14 rounded-2xl border border-tk object-cover flex-shrink-0" />
+                <div class="min-w-0 flex-1">
+                    <h4 class="text-[13px] font-medium clamp-1 group-hover:text-accent transition-colors">${esc(app.title || '')}</h4>
+                    <p class="text-[11px] text-muted mt-0.5 clamp-1">${esc(app.category || '')}</p>
+                    <p class="text-[11px] text-soft clamp-2 mt-1">${esc(app.description || '')}</p>
+                </div>
+            </a>
+        `;
+    }
+    function renderRecent(items) {
+        if (!items.length) { recentList.innerHTML = `<p class="text-[12px] text-muted">No recent additions.</p>`; return; }
+        recentList.innerHTML = items.map(app => `
+            <a href="#/app/${esc(app.id)}" class="flex items-center gap-2.5 group no-underline" style="color: inherit;">
+                <img src="${esc(app.icon && app.icon.trim() ? app.icon : 'https://placehold.co/60')}"
+                     alt="" loading="lazy"
+                     onerror="this.onerror=null;this.src='https://placehold.co/60';"
+                     class="w-8 h-8 rounded-md border border-tk object-cover flex-shrink-0" />
+                <div class="min-w-0 flex-1">
+                    <p class="text-[12px] font-medium clamp-1 group-hover:text-accent transition-colors">${esc(app.title || '')}</p>
+                    <p class="text-[10px] text-muted clamp-1 stat-num">${esc(app.category || '')} · ${esc(app.size || 'n/a')}</p>
+                </div>
+            </a>
+        `).join('');
+    }
+
+    /* ===== Search ===== */
+    searchBar.addEventListener('input', e => {
+        const q = e.target.value.trim().toLowerCase();
+        if (currentView !== 'home') return;
+        if (!q) {
+            searchResults.style.display = 'none';
+            catalog.style.display = '';
+            resultCount.textContent = `${allApps.length} apps`;
+            return;
+        }
+        const matches = allApps.filter(a =>
+            [a.title, a.category, a.description].some(v => (v || '').toLowerCase().includes(q))
+        );
+        searchResults.style.display = '';
+        catalog.style.display = 'none';
+        searchCount.textContent = `${matches.length} match${matches.length === 1 ? '' : 'es'} for "${q}"`;
+        resultCount.textContent = `${matches.length} matches`;
+        if (!matches.length) {
+            searchGrid.innerHTML = `
+                <div class="col-span-full py-16 text-center">
+                    <p class="text-[14px] font-medium text-soft">No results</p>
+                    <p class="text-[12px] text-muted mt-1">Try a different keyword.</p>
+                </div>
+            `;
+        } else {
+            searchGrid.innerHTML = matches.map(cardHTML).join('');
+        }
+    });
+    clearSearchBtn.addEventListener('click', () => {
+        searchBar.value = '';
+        searchBar.dispatchEvent(new Event('input'));
+        searchBar.focus();
+    });
+
+    /* ===== Utils ===== */
+    function esc(v) {
+        if (v == null) return '';
+        return String(v)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    /* ===== Reviews ===== */
+    let currentReviewAppId = null;
+
+    async function fetchReviews(appId) {
+        try {
+            const url = POSTGREST + '/reviews?app_id=eq.' + appId + '&order=created_at.desc';
+            const res = await fetch(url, { headers: HEADERS });
+            if (!res.ok) throw new Error('Failed to fetch reviews');
+            const data = await res.json();
+            return Array.isArray(data) ? data : [];
+        } catch (e) {
+            console.warn('[DevFetch] Could not fetch reviews:', e);
+            return [];
+        }
+    }
+
+    function renderReviews(reviews) {
+        const list = $('reviews-list');
+        if (!reviews.length) {
+            list.innerHTML = `<p class="text-[13px] text-muted text-center py-8">No reviews yet. Be the first to review this app.</p>`;
+            return;
+        }
+        list.innerHTML = reviews.map(r => `
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="flex items-center gap-2">
+                        <span class="review-name">${esc(r.reviewer_name || 'Anonymous')}</span>
+                        <span class="star-row">${starsHTML(parseFloat(r.rating) || 0)}</span>
+                    </div>
+                    <span class="review-date">${formatDate(r.created_at)}</span>
+                </div>
+                <p class="review-text">${esc(r.review_text || '')}</p>
+            </div>
+        `).join('');
+    }
+
+    function openReviewModal(appId) {
+        currentReviewAppId = appId;
+        $('review-modal').classList.remove('hidden');
+        // Reset form
+        $('review-form').reset();
+        $('review-rating').value = '0';
+        document.querySelectorAll('#star-input .star-btn').forEach(s => s.classList.remove('active'));
+        $('review-form-success').classList.add('hidden');
+    }
+
+    function closeReviewModal() {
+        $('review-modal').classList.add('hidden');
+        currentReviewAppId = null;
+    }
+    window.closeReviewModal = closeReviewModal;
+
+    // Close modal on overlay click
+    $('review-modal').addEventListener('click', e => {
+        if (e.target === $('review-modal')) closeReviewModal();
+    });
+
+    // Star input interaction
+    document.querySelectorAll('#star-input .star-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const val = parseInt(btn.dataset.val, 10);
+            $('review-rating').value = val;
+            document.querySelectorAll('#star-input .star-btn').forEach(s => {
+                s.classList.toggle('active', parseInt(s.dataset.val, 10) <= val);
+            });
+        });
+    });
+
+    // Write review button
+    $('write-review-btn').addEventListener('click', () => {
+        if (currentDetailApp) openReviewModal(currentDetailApp.id);
+    });
+
+    // Review form submission
+    $('review-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = $('reviewer-name').value.trim();
+        const rating = parseInt($('review-rating').value, 10);
+        const text = $('review-text').value.trim();
+        if (!name || !text || rating < 1 || rating > 5) {
+            alert('Please fill in your name, select a rating (1-5 stars), and write your review.');
+            return;
+        }
+        try {
+            const res = await fetch(POSTGREST + '/reviews', {
+                method: 'POST',
+                headers: HEADERS,
+                body: JSON.stringify({
+                    app_id: currentReviewAppId,
+                    reviewer_name: name,
+                    rating: rating,
+                    review_text: text,
+                }),
+            });
+            if (!res.ok) throw new Error('Failed to submit review');
+            $('review-form-success').textContent = 'Review submitted successfully. Thank you.';
+            $('review-form-success').classList.remove('hidden');
+            $('review-form').reset();
+            // Reload reviews
+            const reviews = await fetchReviews(currentReviewAppId);
+            renderReviews(reviews);
+            setTimeout(() => {
+                closeReviewModal();
+            }, 2000);
+        } catch (err) {
+            alert('Could not submit review: ' + err.message);
+        }
+    });
+
+    /* ===== Software Requests ===== */
+    async function fetchRequests() {
+        try {
+            const url = POSTGREST + '/software_requests?order=created_at.desc&limit=100';
+            const res = await fetch(url, { headers: HEADERS });
+            if (!res.ok) throw new Error('Failed to fetch requests');
+            const data = await res.json();
+            return Array.isArray(data) ? data : [];
+        } catch (e) {
+            console.warn('[DevFetch] Could not fetch requests:', e);
+            return [];
+        }
+    }
+
+    function renderRequestsList(requests) {
+        const list = $('requests-list');
+        $('requests-count').textContent = `(${requests.length})`;
+        if (!requests.length) {
+            list.innerHTML = `<p class="text-[13px] text-muted text-center py-8">No requests yet. Be the first to request a software.</p>`;
+            return;
+        }
+        list.innerHTML = requests.map(r => {
+            const status = r.status || 'pending';
+            const statusClass = status === 'approved' ? 'approved' : status === 'rejected' ? 'rejected' : 'pending';
+            return `
+                <div class="request-card">
+                    <div class="request-header">
+                        <span class="request-name">${esc(r.software_name || 'Unknown')}</span>
+                        <span class="request-status ${statusClass}">${esc(status)}</span>
+                    </div>
+                    ${r.description ? `<p class="request-desc">${esc(r.description)}</p>` : ''}
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-3">
+                            ${r.category ? `<span class="text-[11px] text-muted">${esc(r.category)}</span>` : ''}
+                            ${r.download_url ? `<a href="${esc(r.download_url)}" target="_blank" rel="noopener noreferrer" class="text-[11px] text-accent hover:underline">Link</a>` : ''}
+                        </div>
+                        <span class="request-meta">Requested by ${esc(r.requester_name || 'Anonymous')} on ${formatDate(r.created_at)}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function showRequestsPage() {
+        setView('requests');
+        document.title = 'Software requests - DevFetch';
+        setMetaDescription('Request new software to be added to DevFetch. Browse community requests.');
+        // Load requests
+        const requests = await fetchRequests();
+        renderRequestsList(requests);
+    }
+
+    // Request form submission
+    $('request-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = $('req-name').value.trim();
+        const software = $('req-software').value.trim();
+        const category = $('req-category').value;
+        const url = $('req-url').value.trim();
+        const desc = $('req-desc').value.trim();
+        if (!name || !software) {
+            alert('Please fill in your name and the software name.');
+            return;
+        }
+        try {
+            const res = await fetch(POSTGREST + '/software_requests', {
+                method: 'POST',
+                headers: HEADERS,
+                body: JSON.stringify({
+                    requester_name: name,
+                    software_name: software,
+                    category: category || null,
+                    download_url: url || null,
+                    description: desc || null,
+                    status: 'pending',
+                }),
+            });
+            if (!res.ok) throw new Error('Failed to submit request');
+            $('request-form-success').textContent = 'Request submitted successfully. Our team will review it.';
+            $('request-form-success').classList.remove('hidden');
+            $('request-form').reset();
+            // Reload requests list
+            const requests = await fetchRequests();
+            renderRequestsList(requests);
+            setTimeout(() => {
+                $('request-form-success').classList.add('hidden');
+            }, 5000);
+        } catch (err) {
+            alert('Could not submit request: ' + err.message);
+        }
+    });
+
+    /* ===== Welcome popup (shows once per browser session) =====
+       Uses sessionStorage so the popup reappears on the next session
+       (i.e. when the user closes the tab and reopens the site).
+       To make it permanent (never show again), replace with localStorage.
+    */
+    function showWelcomePopup() {
+        const popup = $('welcome-popup');
+        if (!popup) return;
+        popup.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function hideWelcomePopup() {
+        const popup = $('welcome-popup');
+        if (!popup) return;
+        popup.classList.add('hidden');
+        document.body.style.overflow = '';
+        sessionStorage.setItem('devfetch-welcome-seen', '1');
+    }
+    $('welcome-continue').addEventListener('click', hideWelcomePopup);
+    $('welcome-dismiss').addEventListener('click', hideWelcomePopup);
+    // Close on overlay click
+    $('welcome-popup').addEventListener('click', e => {
+        if (e.target === $('welcome-popup')) hideWelcomePopup();
+    });
+    // Close on Escape key
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !$('welcome-popup').classList.contains('hidden')) {
+            hideWelcomePopup();
+        }
+    });
+
+    /* ===== Init ===== */
+    handleRoute();
+
+    // Show welcome popup after a short delay (only once per session)
+    if (!sessionStorage.getItem('devfetch-welcome-seen')) {
+        setTimeout(showWelcomePopup, 800);
+    }
+    </script>
+
+    <!--
+      All ad slots are empty. Paste new ad codes inside the matching <div> tags.
+      See the comment block in <head> for the full list of slot IDs.
+    -->
+</body>
+</html>
